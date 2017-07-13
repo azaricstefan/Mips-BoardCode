@@ -18,25 +18,7 @@ void interruptUART() iv IVT_INT_USART2 ics ICS_AUTO
     if(usartStatusRegister & _USART_SR_RXNE)
     {
         receiveUART.flag = 1;
-        //Receive register is NOT EMPTY//
-/*
-        if(receiveUART.flag == 1)
-        {
-          if(receiveUART.bufferPointer < 6) {
-            receiveUART.buffer[receiveUART.bufferPointer++] = usartDataRegister;
-            if(receiveUART.bufferPointer == 6)
-              receiveUART.byteCount = 6 + ((receiveUART.buffer[5] << 8) | receiveUART.buffer[4]) + 1;
-          }
-          else {
-            receiveUART.buffer[receiveUART.bufferPointer++] = usartDataRegister;
-            if(receiveUART.bufferPointer == receiveUART.byteCount) {
-              receiveUART.bufferPointer = 0;
-              responseReceivedFlagWIFI = 1;
-              receiveUART.flag = 0;
-            }
-          }
-        }
-*/
+
         usartDataRegister = USART2_DR;
         receiveUART.buffer[receiveUART.bufferPointer++] = usartDataRegister;
         ++receiveUART.byteCount;
@@ -67,7 +49,7 @@ void interruptUART() iv IVT_INT_USART2 ics ICS_AUTO
 
 void USART2_Init()
 {
-  ///////////////////////////Initialize UART Variables/////////////////////////////////////////////////////////////////////
+  //Initialize UART Variables
   receiveUART.flag = 0;
   receiveUART.byteCount = 0;
   receiveUART.bufferPointer = 0;
@@ -75,12 +57,12 @@ void USART2_Init()
   transmitUART.byteCount = 0;
   transmitUART.bufferPointer = 0;
 
-  ///////////////////////////Enable Peripheral Clocks//////////////////////////////////////////////////////////////////////
+  //Enable Peripheral Clocks
   RCC_AHB1ENR |= _GPIOD_CLOCK_ENABLE; //Enable PORTD Clock
   RCC_APB1ENR |= _USART_CLOCK_ENABLE; //Enable USART Clock
   delay_ms(10);
 
-  ///////////////////////////Initialize UART module////////////////////////////////////////////////////////////////////////
+  //Initialize UART module
   GPIOD_MODER |= _GPIOD_PIN6_MODE_AF | _GPIOD_PIN5_MODE_AF; //GPIOD Mode: Alternate Function
   GPIOD_OSPEEDR |= _GPIOD_PIN6_OSPEED_VERYHIGH | _GPIOD_PIN5_OSPEED_VERYHIGH; //GPIOD OSpeed: Very High Speed
   GPIOD_AFRL |= _GPIOD_PIN6_AF_USART2 | _GPIOD_PIN5_AF_USART2; //GPIOD AlternateFunction: USART2
@@ -182,14 +164,15 @@ void send_SMS() {
      USART2_Send(cz);
 }
 
-void sendData(float temp, float hum) {
+void sendData(float temp, float hum, float pres) {
      uint32_t len, i;
-     uint8_t txtTemp[10], txtHum[10];
-     uint8_t url[120] = "AT+HTTPPARA=\"URL\",\"http://azaric.asuscomm.com:9998/mips/log?temp=";
+     uint8_t txtTemp[10], txtHum[10], txtPres[10];
+     uint8_t url[150] = "AT+HTTPPARA=\"URL\",\"http://azaric.asuscomm.com:9998/mips/log?temp=";
      len = strlen(url);
      FloatToStr(temp, txtTemp);
      //UART3_Write_Text(txtTemp);
      FloatToStr(hum, txtHum);
+    FloatToStr(pres, txtPres);
      for (i = 0; i < strlen(txtTemp); i++) {
          if (txtTemp[i] == '\0') {
             break;
@@ -205,6 +188,16 @@ void sendData(float temp, float hum) {
          }
          url[len++] = txtHum[i];
      }
+    
+    url[len++] = '&';url[len++] = 'p';url[len++] = 'r';url[len++] = 'e';url[len++] = 's';url[len++] = '=';
+    
+    for (i = 0; i < strlen(txtPres); i++) {
+        if (txtPres[i] == '\0') {
+            break;
+        }
+        url[len++] = txtPres[i];
+    }
+    
      url[len++] = '\"';url[len++] = '\r';url[len++] = '\n';url[len++] = '\0';
 
      USART2_Send_Text("AT+CREG?\r\n");
