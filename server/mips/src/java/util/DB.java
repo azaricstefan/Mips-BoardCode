@@ -38,10 +38,12 @@ public class DB {
         String PASS = "mips"; // PI PASS 123456
         try {
           Class.forName("com.mysql.jdbc.Driver");
+          //Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
           for (int i = 0; i < MAX_CON; i++) {
             bafer[i] = DriverManager.getConnection(URL, USER, PASS);
           }
         } catch (ClassNotFoundException | SQLException ex) {
+        //} catch (SQLException ex) {
           Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
