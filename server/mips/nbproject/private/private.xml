@@ -3,10 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/TajnaSluzba/Documents/NetBeansProjects/mips/src/java/servlets/LogDataServlet.java</file>
-            <file>file:/C:/Users/TajnaSluzba/Documents/NetBeansProjects/mips/src/java/util/DB.java</file>
-            <file>file:/C:/Users/TajnaSluzba/Documents/NetBeansProjects/mips/web/META-INF/context.xml</file>
-            <file>file:/C:/Users/TajnaSluzba/Documents/NetBeansProjects/mips/web/WEB-INF/web.xml</file>
+            <file>file:/D:/AAA/MIPS_PROJ/MIPS-proj/server/mips/web/index.jsp</file>
+            <file>file:/D:/AAA/MIPS_PROJ/MIPS-proj/server/mips/src/java/util/DB.java</file>
+            <file>file:/D:/AAA/MIPS_PROJ/MIPS-proj/server/mips/src/java/servlets/LogDataServlet.java</file>
+            <file>file:/D:/AAA/MIPS_PROJ/MIPS-proj/server/mips/src/java/beans/WeatherData.java</file>
+            <file>file:/D:/AAA/MIPS_PROJ/MIPS-proj/server/mips/src/java/servlets/ShowDataServlet.java</file>
+            <file>file:/D:/AAA/MIPS_PROJ/MIPS-proj/server/mips/web/META-INF/context.xml</file>
+            <file>file:/D:/AAA/MIPS_PROJ/MIPS-proj/server/mips/web/WEB-INF/web.xml</file>
         </group>
     </open-files>
 </project-private>

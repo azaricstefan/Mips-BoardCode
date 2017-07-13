@@ -8,13 +8,17 @@
         <servlet-name>LogDataServlet</servlet-name>
         <url-pattern>/log</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>ShowDataServlet</servlet-name>
+        <servlet-class>servlets.ShowDataServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ShowDataServlet</servlet-name>
+        <url-pattern>/show</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
-    <resource-env-ref>
-        <resource-env-ref-name>jdbc/mips</resource-env-ref-name>
-        <resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
-    </resource-env-ref>
 </web-app>
