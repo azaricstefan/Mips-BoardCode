@@ -1,5 +1,7 @@
 #include "uart.h"
 
+sbit DTR at ODR11_GPIOD_ODR_bit;
+
 int32_t current = 0;
 int32_t received_flag = 0;
 int32_t kopirao = 0;
@@ -70,7 +72,10 @@ void USART2_Init()
   NVIC_ISER1 |= _NVIC_INT_USART2;
   USART2_BRR |= _USART_BAUD_RATE;
   USART2_CR1 |= _USART_ENABLE | _USART_RXNEIE | _USART_TE | _USART_RE;
-  delay_ms(10);
+  my_Delay_ms(10);
+  
+  GPIO_Digital_Output(&GPIOD_BASE, _GPIO_PINMASK_11);
+  DTR = 0;
 }
 
 void USART2_SendReceived()
@@ -200,6 +205,10 @@ void sendData(float temp, float hum, float pres) {
     
      url[len++] = '\"';url[len++] = '\r';url[len++] = '\n';url[len++] = '\0';
 
+     // wake up
+     DTR = 0;
+     my_Delay_ms(50);
+
      USART2_Send_Text("AT+CREG?\r\n");
      my_Delay_ms(_TIMER_UART);
      USART2_Send_Text("AT+CIPSHUT\r\n");
@@ -231,4 +240,8 @@ void sendData(float temp, float hum, float pres) {
      my_Delay_ms(_TIMER_UART);
      USART2_Send_Text("AT+CGATT=0\r\n");
      my_Delay_ms(_TIMER_UART);
+     
+     // go to sleep
+     DTR = 1;
+
 }

@@ -9,5 +9,7 @@ void InitTimerUs();
 void my_Delay_ms(uint32_t num);
 void InitTimerMs();
 
+void RTCInit(void);
+
 
 #endif

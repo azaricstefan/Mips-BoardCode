@@ -1,5 +1,5 @@
-#line 1 "C:/Users/tasha/Desktop/projPrekidi/uart.c"
-#line 1 "c:/users/tasha/desktop/projprekidi/uart.h"
+#line 1 "C:/Code/Tamara latest/uart.c"
+#line 1 "c:/code/tamara latest/uart.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 
 
@@ -49,15 +49,17 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 1 "c:/users/tasha/desktop/projprekidi/timer.h"
+#line 1 "c:/code/tamara latest/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 6 "c:/users/tasha/desktop/projprekidi/timer.h"
+#line 6 "c:/code/tamara latest/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
 void my_Delay_ms(uint32_t num);
 void InitTimerMs();
-#line 36 "c:/users/tasha/desktop/projprekidi/uart.h"
+
+void RTCInit(void);
+#line 36 "c:/code/tamara latest/uart.h"
 typedef struct StructUART {
  uint8_t flag;
  uint16_t byteCount;
@@ -70,8 +72,11 @@ extern volatile StructUART transmitUART, receiveUART;
 
 void USART2_Send_Text(uint8_t* input);
 void USART2_Init();
-void sendData(float temp, float hum);
-#line 3 "C:/Users/tasha/Desktop/projPrekidi/uart.c"
+void sendData(float temp, float hum, float pres);
+void send_SMS();
+#line 3 "C:/Code/Tamara latest/uart.c"
+sbit DTR at ODR11_GPIOD_ODR_bit;
+
 int32_t current = 0;
 int32_t received_flag = 0;
 int32_t kopirao = 0;
@@ -90,7 +95,7 @@ void interruptUART() iv IVT_INT_USART2 ics ICS_AUTO
  if(usartStatusRegister &  0x00000020UL )
  {
  receiveUART.flag = 1;
-#line 40 "C:/Users/tasha/Desktop/projPrekidi/uart.c"
+
  usartDataRegister = USART2_DR;
  receiveUART.buffer[receiveUART.bufferPointer++] = usartDataRegister;
  ++receiveUART.byteCount;
@@ -142,7 +147,10 @@ void USART2_Init()
  NVIC_ISER1 |=  0x00000040UL ;
  USART2_BRR |=  0x00000C35UL ;
  USART2_CR1 |=  0x00002000UL  |  0x00000020UL  |  0x00000008UL  |  0x00000004UL ;
- delay_ms(10);
+ my_Delay_ms(10);
+
+ GPIO_Digital_Output(&GPIOD_BASE, _GPIO_PINMASK_11);
+ DTR = 0;
 }
 
 void USART2_SendReceived()
@@ -236,14 +244,15 @@ void send_SMS() {
  USART2_Send(cz);
 }
 
-void sendData(float temp, float hum) {
+void sendData(float temp, float hum, float pres) {
  uint32_t len, i;
- uint8_t txtTemp[10], txtHum[10];
- uint8_t url[120] = "AT+HTTPPARA=\"URL\",\"http://azaric.asuscomm.com:9998/mips/log?temp=";
+ uint8_t txtTemp[10], txtHum[10], txtPres[10];
+ uint8_t url[150] = "AT+HTTPPARA=\"URL\",\"http://azaric.asuscomm.com:9998/mips/log?temp=";
  len = strlen(url);
  FloatToStr(temp, txtTemp);
 
  FloatToStr(hum, txtHum);
+ FloatToStr(pres, txtPres);
  for (i = 0; i < strlen(txtTemp); i++) {
  if (txtTemp[i] == '\0') {
  break;
@@ -259,7 +268,21 @@ void sendData(float temp, float hum) {
  }
  url[len++] = txtHum[i];
  }
+
+ url[len++] = '&';url[len++] = 'p';url[len++] = 'r';url[len++] = 'e';url[len++] = 's';url[len++] = '=';
+
+ for (i = 0; i < strlen(txtPres); i++) {
+ if (txtPres[i] == '\0') {
+ break;
+ }
+ url[len++] = txtPres[i];
+ }
+
  url[len++] = '\"';url[len++] = '\r';url[len++] = '\n';url[len++] = '\0';
+
+
+ DTR = 0;
+ my_Delay_ms(50);
 
  USART2_Send_Text("AT+CREG?\r\n");
  my_Delay_ms( 1000 );
@@ -292,4 +315,8 @@ void sendData(float temp, float hum) {
  my_Delay_ms( 1000 );
  USART2_Send_Text("AT+CGATT=0\r\n");
  my_Delay_ms( 1000 );
+
+
+ DTR = 1;
+
 }

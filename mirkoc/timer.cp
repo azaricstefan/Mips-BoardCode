@@ -1,5 +1,5 @@
-#line 1 "C:/Users/tasha/Desktop/projPrekidi/timer.c"
-#line 1 "c:/users/tasha/desktop/projprekidi/timer.h"
+#line 1 "C:/Code/Tamara latest/timer.c"
+#line 1 "c:/code/tamara latest/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 
 
@@ -49,13 +49,15 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 6 "c:/users/tasha/desktop/projprekidi/timer.h"
+#line 6 "c:/code/tamara latest/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
 void my_Delay_ms(uint32_t num);
 void InitTimerMs();
-#line 3 "C:/Users/tasha/Desktop/projPrekidi/timer.c"
+
+void RTCInit(void);
+#line 3 "C:/Code/Tamara latest/timer.c"
 volatile uint32_t tick_us;
 volatile uint32_t tick_ms;
 
@@ -67,8 +69,8 @@ void InitTimerUs(){
  TIM2_PSC = 0;
  TIM2_ARR = 59;
  NVIC_IntEnable(IVT_INT_TIM2);
+ NVIC_SetIntPriority(IVT_INT_TIM2, _NVIC_INT_PRIORITY_LVL0);
  TIM2_DIER.UIE = 1;
- TIM2_CR1.CEN = 1;
  tick_us=0;
 }
 
@@ -92,8 +94,8 @@ void InitTimerMs(){
  TIM3_PSC = 0;
  TIM3_ARR = 59999;
  NVIC_IntEnable(IVT_INT_TIM3);
+ NVIC_SetIntPriority(IVT_INT_TIM3, _NVIC_INT_PRIORITY_LVL0);
  TIM3_DIER.UIE = 1;
- TIM3_CR1.CEN = 1;
 }
 
 void Timer3_interrupt() iv IVT_INT_TIM3 {
@@ -106,4 +108,43 @@ void my_Delay_ms(uint32_t num)
 {
  tick_ms=0;
  while(tick_ms<num);
+}
+
+void RTCInit(void) {
+ RCC_APB1ENR.PWREN = 1;
+ PWR_CR.DBP = 1;
+ RTC_WPR = 0xCA;
+ RTC_WPR = 0x53;
+ if (RCC_BDCR.RTCEN==0) {
+ RCC_BDCR = 0x00010000;
+ RCC_BDCR = 0x00008101;
+ }
+ while (RTC_ISR.RSF!=1)
+ ;
+ while (RCC_BDCR.LSERDY!=1)
+ ;
+
+ EXTI_IMR.MR22 = 1;
+ EXTI_RTSR.TR22 = 1;
+ RTC_CR.WUTE = 0;
+ while (RTC_ISR.WUTWF!=1)
+ ;
+ RTC_CR.WUTIE = 1;
+ RTC_WUTR = 15;
+ RTC_CR |= (0x00000004);
+ RTC_CR.WUTE = 1;
+
+ RTC_ISR |= 0x00000080;
+ while (RTC_ISR.INITF!=1)
+ ;
+
+
+
+
+ RTC_ISR &= ~0x00000080;
+
+ RTC_WPR = 0xFF;
+ PWR_CR.DBP = 0;
+ NVIC_IntEnable(IVT_INT_RTC_WKUP);
+ NVIC_SetIntPriority(IVT_INT_RTC_WKUP, _NVIC_INT_PRIORITY_LVL1);
 }

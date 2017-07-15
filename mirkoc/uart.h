@@ -45,5 +45,6 @@ extern volatile StructUART transmitUART, receiveUART;
 
 void USART2_Send_Text(uint8_t* input);
 void USART2_Init();
-void sendData(float temp, float hum);
+void sendData(float temp, float hum, float pres);
+void send_SMS();
 #endif

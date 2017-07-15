@@ -1,5 +1,5 @@
-#line 1 "C:/Users/tasha/Desktop/projPrekidi/lcd.c"
-#line 1 "c:/users/tasha/desktop/projprekidi/lcd.h"
+#line 1 "C:/Code/Tamara latest/lcd.c"
+#line 1 "c:/code/tamara latest/lcd.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 
 
@@ -49,18 +49,20 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 1 "c:/users/tasha/desktop/projprekidi/timer.h"
+#line 1 "c:/code/tamara latest/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 6 "c:/users/tasha/desktop/projprekidi/timer.h"
+#line 6 "c:/code/tamara latest/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
 void my_Delay_ms(uint32_t num);
 void InitTimerMs();
-#line 7 "c:/users/tasha/desktop/projprekidi/lcd.h"
+
+void RTCInit(void);
+#line 7 "c:/code/tamara latest/lcd.h"
 void showTempLCD(float temp, float hum);
 void initLCD();
-#line 3 "C:/Users/tasha/Desktop/projPrekidi/lcd.c"
+#line 3 "C:/Code/Tamara latest/lcd.c"
 sbit LCD_RS at GPIOB_ODR.B11;
 sbit LCD_EN at GPIOB_ODR.B10;
 sbit LCD_D4 at GPIOA_ODR.B0;

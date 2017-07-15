@@ -1,37 +1,56 @@
 main
 	__FillZeros
 	initProg
+		GPIO_Digital_Output
+			GPIO_Config
+				GPIO_Clk_Enable
 		InitTimerUs
 			NVIC_IntEnable
+			NVIC_SetIntPriority
 		InitTimerMs
 			NVIC_IntEnable
+			NVIC_SetIntPriority
 		initLCD
 			GPIO_Digital_Output
-				GPIO_Config
-					GPIO_Clk_Enable
-		GPIO_Digital_Output
-	USART2_Init
-	calcTemp
-		oneWireReset
+		USART2_Init
+			my_Delay_ms
 			GPIO_Digital_Output
-			my_Delay_us
+		BME280_Init
+			I2C2_Init_Advanced
+				I2Cx_Init_Advanced
+					RCC_GetClocksFrequency
+						Get_Fosc_kHz
+					GPIO_Alternate_Function_Enable
+						GPIO_Config_Pin_Alternate_Function
+							GPIO_Config
+			I2C_Set_Active
+			BME_Read_DigU
+				I2C2_Start
+					I2Cx_Start
+						I2Cx_Wait_For_Idle
+							I2Cx_Is_Idle
+						ChekXForEvent
+							I2Cx_Get_Status
+				I2C2_Write
+					I2Cx_Write
+						ChekXForEvent
+				I2C2_Read
+					I2Cx_Read
+						ChekXForEvent
+			BME_Read_DigS
+				I2C2_Start
+				I2C2_Write
+				I2C2_Read
+			BME_Write
+				I2C2_Start
+				I2C2_Write
+		RTCInit
+			NVIC_IntEnable
+			NVIC_SetIntPriority
+		initUltrasonic
+			GPIO_Digital_Output
 			GPIO_Digital_Input
 				GPIO_Config
-		oneWireWrite
-			oneWireWriteBit
-				GPIO_Digital_Output
-				my_Delay_us
-		my_Delay_ms
-		oneWireRead
-			oneWireReadBit
-				GPIO_Digital_Output
-				GPIO_Digital_Input
-				my_Delay_us
-	calcHumTemp
-		GPIO_Digital_Output
-		my_Delay_ms
-		GPIO_Digital_Input
-		my_Delay_us
 	showTempLCD
 		Lcd_Init
 			GPIO_Config
@@ -49,6 +68,46 @@ main
 			Lcd_Chr_CP
 				Lcd_Cmd
 	my_Delay_ms
-Timer3_interrupt
+	getDistance
+		my_Delay_us
 Timer2_interrupt
+Timer3_interrupt
+interRTC
+	calcTemp
+		oneWireReset
+			GPIO_Digital_Output
+			my_Delay_us
+			GPIO_Digital_Input
+		oneWireWrite
+			oneWireWriteBit
+				GPIO_Digital_Output
+				my_Delay_us
+		my_Delay_ms
+		oneWireRead
+			oneWireReadBit
+				GPIO_Digital_Output
+				GPIO_Digital_Input
+				my_Delay_us
+	calcHumTemp
+		GPIO_Digital_Output
+		my_Delay_ms
+		GPIO_Digital_Input
+		my_Delay_us
+	getPressure
+		getTemperature
+			BME_Read
+				I2C2_Start
+				I2C2_Write
+				I2C2_Read
+			BME280_compensate_T_int32
+		BME_Read
+		BME280_compensate_P_int32
+	showTempLCD
+	sendData
+		__CC2DW
+		strlen
+		FloatToStr
+		my_Delay_ms
+		USART2_Send_Text
+	my_Delay_ms
 interruptUART

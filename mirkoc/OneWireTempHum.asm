@@ -366,7 +366,7 @@ STR	LR, [SP, #0]
 ;OneWireTempHUm.c,109 :: 		float calcHumTemp(uint8_t humB){    //5.2 MCU SENDS OUT START SIGNAL TO DHT (FIGURE 3, BELOW)
 ;OneWireTempHUm.c,110 :: 		uint32_t result = 1, i = 0;
 ;OneWireTempHUm.c,109 :: 		float calcHumTemp(uint8_t humB){    //5.2 MCU SENDS OUT START SIGNAL TO DHT (FIGURE 3, BELOW)
-STRB	R0, [SP, #20]
+STRB	R0, [SP, #16]
 ; i end address is: 12 (R3)
 ;OneWireTempHUm.c,110 :: 		uint32_t result = 1, i = 0;
 ; i start address is: 12 (R3)
@@ -510,7 +510,7 @@ IT	AL
 BAL	L_calcHumTemp13
 L_calcHumTemp14:
 ;OneWireTempHUm.c,138 :: 		if(humB==0)
-LDRB	R1, [SP, #20]
+LDRB	R1, [SP, #16]
 CMP	R1, #0
 IT	NE
 BNE	L_calcHumTemp20
@@ -536,7 +536,7 @@ MOVT	R1, #15820
 VMOV	S0, R1
 VMUL.F32	S0, S1, S0
 VADD.F32	S0, S2, S0
-VSTR	#1, S0, [SP, #16]
+VSTR	#1, S0, [SP, #20]
 ;OneWireTempHUm.c,142 :: 		if(array[2]&0x80)
 AND	R1, R2, #128
 UXTB	R1, R1
@@ -544,9 +544,9 @@ CMP	R1, #0
 IT	EQ
 BEQ	L_calcHumTemp21
 ;OneWireTempHUm.c,143 :: 		res=-res;
-VLDR	#1, S0, [SP, #16]
+VLDR	#1, S0, [SP, #20]
 VNEG.F32	S0, S0
-VSTR	#1, S0, [SP, #16]
+VSTR	#1, S0, [SP, #20]
 L_calcHumTemp21:
 ;OneWireTempHUm.c,144 :: 		}
 IT	AL
@@ -573,7 +573,7 @@ MOVT	R1, #15820
 VMOV	S0, R1
 VMUL.F32	S0, S1, S0
 VADD.F32	S0, S2, S0
-VSTR	#1, S0, [SP, #16]
+VSTR	#1, S0, [SP, #20]
 ;OneWireTempHUm.c,149 :: 		if(array[0]&0x80)
 AND	R1, R2, #128
 UXTB	R1, R1
@@ -581,14 +581,14 @@ CMP	R1, #0
 IT	EQ
 BEQ	L_calcHumTemp23
 ;OneWireTempHUm.c,150 :: 		res=-res;
-VLDR	#1, S0, [SP, #16]
+VLDR	#1, S0, [SP, #20]
 VNEG.F32	S0, S0
-VSTR	#1, S0, [SP, #16]
+VSTR	#1, S0, [SP, #20]
 L_calcHumTemp23:
 ;OneWireTempHUm.c,151 :: 		}
 L_calcHumTemp22:
 ;OneWireTempHUm.c,152 :: 		return res;
-VLDR	#1, S0, [SP, #16]
+VLDR	#1, S0, [SP, #20]
 ;OneWireTempHUm.c,153 :: 		}
 L_end_calcHumTemp:
 LDR	LR, [SP, #0]
