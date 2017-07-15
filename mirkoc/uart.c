@@ -223,6 +223,8 @@ void sendData(float temp, float hum, float pres) {
      my_Delay_ms(_TIMER_UART);
      USART2_Send_Text("AT+SAPBR=1,1\r\n");
      my_Delay_ms(_TIMER_UART);
+     my_Delay_ms(_TIMER_UART);
+     my_Delay_ms(_TIMER_UART);
      USART2_Send_Text("AT+HTTPTERM\r\n");
      my_Delay_ms(_TIMER_UART);
      USART2_Send_Text("AT+HTTPINIT\r\n");
@@ -233,6 +235,8 @@ void sendData(float temp, float hum, float pres) {
      //UART3_Write_Text(url);
      my_Delay_ms(_TIMER_UART);
      USART2_Send_Text("AT+HTTPACTION=1\r\n");
+     my_Delay_ms(_TIMER_UART);
+     my_Delay_ms(_TIMER_UART);
      my_Delay_ms(_TIMER_UART);
      USART2_Send_Text("AT+CIPSHUT\r\n");
      my_Delay_ms(_TIMER_UART);
