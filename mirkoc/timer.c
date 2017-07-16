@@ -11,7 +11,7 @@ void InitTimerUs(){
   TIM2_PSC = 0;
   TIM2_ARR = 59;
   NVIC_IntEnable(IVT_INT_TIM2);
-  NVIC_SetIntPriority(IVT_INT_TIM2, _NVIC_INT_PRIORITY_LVL0);
+  NVIC_SetIntPriority(IVT_INT_TIM2, _NVIC_INT_PRIORITY_LVL1);
   TIM2_DIER.UIE = 1;
   tick_us=0;
 }
@@ -36,7 +36,7 @@ void InitTimerMs(){
   TIM3_PSC = 0;
   TIM3_ARR = 59999;
   NVIC_IntEnable(IVT_INT_TIM3);
-  NVIC_SetIntPriority(IVT_INT_TIM3, _NVIC_INT_PRIORITY_LVL0);
+  NVIC_SetIntPriority(IVT_INT_TIM3, _NVIC_INT_PRIORITY_LVL1);
   TIM3_DIER.UIE = 1;
 }
 
@@ -72,7 +72,7 @@ void RTCInit(void) {
   while (RTC_ISR.WUTWF!=1) // Wait for wake-up timer access
     ;
   RTC_CR.WUTIE = 1; // Enable wake-up timer interrupt
-  RTC_WUTR = 15; // Set timer period in seconds
+  RTC_WUTR = _RTC_TIME; // Set timer period in seconds
   RTC_CR |= (0x00000004); // Clear WUCKSEL, to select LSE as clock
   RTC_CR.WUTE = 1; // Enable wake-up timer
 
@@ -88,5 +88,5 @@ void RTCInit(void) {
   RTC_WPR = 0xFF; // Lock write protect
   PWR_CR.DBP = 0; // Inhibit RTC access
   NVIC_IntEnable(IVT_INT_RTC_WKUP); // Enable RTC wake up interrupt
-  NVIC_SetIntPriority(IVT_INT_RTC_WKUP, _NVIC_INT_PRIORITY_LVL1);
+  NVIC_SetIntPriority(IVT_INT_RTC_WKUP, _NVIC_INT_PRIORITY_LVL2);
 }

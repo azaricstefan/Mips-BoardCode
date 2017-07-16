@@ -27,8 +27,8 @@ STR	R1, [R0, #0]
 ;timer.c,13 :: 		NVIC_IntEnable(IVT_INT_TIM2);
 MOVW	R0, #44
 BL	_NVIC_IntEnable+0
-;timer.c,14 :: 		NVIC_SetIntPriority(IVT_INT_TIM2, _NVIC_INT_PRIORITY_LVL0);
-MOVS	R1, #0
+;timer.c,14 :: 		NVIC_SetIntPriority(IVT_INT_TIM2, _NVIC_INT_PRIORITY_LVL1);
+MOVS	R1, #1
 MOVS	R0, #44
 BL	_NVIC_SetIntPriority+0
 ;timer.c,15 :: 		TIM2_DIER.UIE = 1;
@@ -135,8 +135,8 @@ STR	R1, [R0, #0]
 ;timer.c,38 :: 		NVIC_IntEnable(IVT_INT_TIM3);
 MOVW	R0, #45
 BL	_NVIC_IntEnable+0
-;timer.c,39 :: 		NVIC_SetIntPriority(IVT_INT_TIM3, _NVIC_INT_PRIORITY_LVL0);
-MOVS	R1, #0
+;timer.c,39 :: 		NVIC_SetIntPriority(IVT_INT_TIM3, _NVIC_INT_PRIORITY_LVL1);
+MOVS	R1, #1
 MOVS	R0, #45
 BL	_NVIC_SetIntPriority+0
 ;timer.c,40 :: 		TIM3_DIER.UIE = 1;
@@ -310,8 +310,8 @@ SXTB	R2, R2
 MOVW	R0, #lo_addr(RTC_CR+0)
 MOVT	R0, #hi_addr(RTC_CR+0)
 STR	R2, [R0, #0]
-;timer.c,75 :: 		RTC_WUTR = 15; // Set timer period in seconds
-MOVS	R1, #15
+;timer.c,75 :: 		RTC_WUTR = _RTC_TIME; // Set timer period in seconds
+MOVS	R1, #60
 MOVW	R0, #lo_addr(RTC_WUTR+0)
 MOVT	R0, #hi_addr(RTC_WUTR+0)
 STR	R1, [R0, #0]
@@ -369,8 +369,8 @@ STR	R1, [R0, #0]
 ;timer.c,90 :: 		NVIC_IntEnable(IVT_INT_RTC_WKUP); // Enable RTC wake up interrupt
 MOVW	R0, #19
 BL	_NVIC_IntEnable+0
-;timer.c,91 :: 		NVIC_SetIntPriority(IVT_INT_RTC_WKUP, _NVIC_INT_PRIORITY_LVL1);
-MOVS	R1, #1
+;timer.c,91 :: 		NVIC_SetIntPriority(IVT_INT_RTC_WKUP, _NVIC_INT_PRIORITY_LVL2);
+MOVS	R1, #2
 MOVS	R0, #19
 BL	_NVIC_SetIntPriority+0
 ;timer.c,92 :: 		}

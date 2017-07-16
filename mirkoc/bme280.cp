@@ -115,6 +115,8 @@ void BME280_Init() {
  char data_[10];
  char *output;
  I2C2_Init_Advanced(100000, &_GPIO_MODULE_I2C2_PB10_11);
+ NVIC_SetIntPriority(IVT_INT_I2C2_EV, _NVIC_INT_PRIORITY_LVL0);
+ NVIC_SetIntPriority(IVT_INT_I2C2_ER, _NVIC_INT_PRIORITY_LVL0);
  I2C_Set_Active(&I2C_Start, &I2C1_Read, &I2C1_Write);
 
 

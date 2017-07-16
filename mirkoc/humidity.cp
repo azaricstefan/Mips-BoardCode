@@ -1,11 +1,5 @@
-#line 1 "C:/Code/Tamara latest/ultrasonic.c"
-#line 1 "c:/code/tamara latest/ultrasonic.h"
-
-
-
-void initUltrasonic();
-double getDistance();
-#line 1 "c:/code/tamara latest/timer.h"
+#line 1 "C:/Code/Tamara latest/humidity.c"
+#line 1 "c:/code/tamara latest/humidity.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 
 
@@ -55,6 +49,8 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
+#line 1 "c:/code/tamara latest/timer.h"
+#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 #line 7 "c:/code/tamara latest/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
@@ -63,33 +59,55 @@ void my_Delay_ms(uint32_t num);
 void InitTimerMs();
 
 void RTCInit(void);
-#line 4 "C:/Code/Tamara latest/ultrasonic.c"
-sbit TRIG at ODR14_GPIOD_ODR_bit;
-sbit ECHO at IDR15_GPIOD_IDR_bit;
+#line 9 "c:/code/tamara latest/humidity.h"
+float calcTemp();
+float calcHumTemp(uint8_t humB);
+#line 3 "C:/Code/Tamara latest/humidity.c"
+sbit HUM_OUT at ODR7_GPIOC_ODR_bit;
+sbit HUM_IN at IDR7_GPIOC_IDR_bit;
 
-void initUltrasonic() {
- GPIO_Digital_Output(&GPIOD_BASE, _GPIO_PINMASK_14);
- GPIO_Digital_Input(&GPIOD_BASE, _GPIO_PINMASK_15);
-}
-double getDistance() {
- long cnt, echoValue;
- double distance;
+float calcHumTemp(uint8_t humB){
+ uint32_t result = 1, i = 0;
+ uint8_t array[5];
+ float res=0;
+ for(i;i<5;i++)
+ array[i] = 0;
 
+ GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_7);
+ HUM_OUT = 1;
+ HUM_OUT = 0;
+ my_Delay_ms(18);
+ GPIO_Digital_Input(&GPIOC_BASE, _GPIO_PINMASK_7);
+ my_Delay_us(70);
+ result = HUM_IN;
+ my_Delay_us(130);
 
- TRIG = 0;
- TRIG = 1;
- my_Delay_us(10);
- TRIG = 0;
-
-
- cnt = 0;
- while (ECHO == 0);
- while (ECHO == 1) {
- cnt++;
- my_Delay_us(1);
+ i=0;
+ for(i;i<40;i++){
+ while(HUM_IN == 0);
+ my_Delay_us(50);
+ if(HUM_IN == 0)
+ array[i/8] |= HUM_IN<<(7-i%8);
+ else
+ {
+ array[i/8] |= HUM_IN<<(7-i%8);
+ my_Delay_us(50);
+ }
  }
 
-
- distance = cnt / 58.0;
- return distance;
+ if(humB==0)
+ {
+ res=array[2]&0x7F;
+ res=res*25.6+array[3]*0.1;
+ if(array[2]&0x80)
+ res=-res;
+ }
+ else
+ {
+ res=array[0]&0x7F;
+ res=res*25.6+array[1]*0.1;
+ if(array[0]&0x80)
+ res=-res;
+ }
+ return res;
 }

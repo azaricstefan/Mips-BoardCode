@@ -49,7 +49,7 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 6 "c:/code/tamara latest/timer.h"
+#line 7 "c:/code/tamara latest/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -69,7 +69,7 @@ void InitTimerUs(){
  TIM2_PSC = 0;
  TIM2_ARR = 59;
  NVIC_IntEnable(IVT_INT_TIM2);
- NVIC_SetIntPriority(IVT_INT_TIM2, _NVIC_INT_PRIORITY_LVL0);
+ NVIC_SetIntPriority(IVT_INT_TIM2, _NVIC_INT_PRIORITY_LVL1);
  TIM2_DIER.UIE = 1;
  tick_us=0;
 }
@@ -94,7 +94,7 @@ void InitTimerMs(){
  TIM3_PSC = 0;
  TIM3_ARR = 59999;
  NVIC_IntEnable(IVT_INT_TIM3);
- NVIC_SetIntPriority(IVT_INT_TIM3, _NVIC_INT_PRIORITY_LVL0);
+ NVIC_SetIntPriority(IVT_INT_TIM3, _NVIC_INT_PRIORITY_LVL1);
  TIM3_DIER.UIE = 1;
 }
 
@@ -130,7 +130,7 @@ void RTCInit(void) {
  while (RTC_ISR.WUTWF!=1)
  ;
  RTC_CR.WUTIE = 1;
- RTC_WUTR = 15;
+ RTC_WUTR =  60 ;
  RTC_CR |= (0x00000004);
  RTC_CR.WUTE = 1;
 
@@ -146,5 +146,5 @@ void RTCInit(void) {
  RTC_WPR = 0xFF;
  PWR_CR.DBP = 0;
  NVIC_IntEnable(IVT_INT_RTC_WKUP);
- NVIC_SetIntPriority(IVT_INT_RTC_WKUP, _NVIC_INT_PRIORITY_LVL1);
+ NVIC_SetIntPriority(IVT_INT_RTC_WKUP, _NVIC_INT_PRIORITY_LVL2);
 }

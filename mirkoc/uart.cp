@@ -51,7 +51,7 @@ typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
 #line 1 "c:/code/tamara latest/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 6 "c:/code/tamara latest/timer.h"
+#line 7 "c:/code/tamara latest/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -72,14 +72,13 @@ extern volatile StructUART transmitUART, receiveUART;
 
 void USART2_Send_Text(uint8_t* input);
 void USART2_Init();
-void sendData(float temp, float hum, float pres);
+void sendData(float temp, float hum, float pres, float dist);
 void send_SMS();
 #line 3 "C:/Code/Tamara latest/uart.c"
-sbit DTR at ODR11_GPIOD_ODR_bit;
+sbit RST at ODR11_GPIOD_ODR_bit;
 
 int32_t current = 0;
 int32_t received_flag = 0;
-int32_t kopirao = 0;
 
 
 
@@ -148,9 +147,9 @@ void USART2_Init()
  USART2_BRR |=  0x00000C35UL ;
  USART2_CR1 |=  0x00002000UL  |  0x00000020UL  |  0x00000008UL  |  0x00000004UL ;
  my_Delay_ms(10);
-
+ NVIC_SetIntPriority(IVT_INT_USART2, _NVIC_INT_PRIORITY_LVL0);
  GPIO_Digital_Output(&GPIOD_BASE, _GPIO_PINMASK_11);
- DTR = 0;
+ RST=1;
 }
 
 void USART2_SendReceived()
@@ -188,10 +187,8 @@ void USART2_Send_Text(char* input)
 {
  char input_Char = 0x00;
 
- while(transmitUART.flag == 1)
- {
+ while(transmitUART.flag == 1);
 
- }
  receiveUART.flag = 0;
 
  transmitUART.byteCount = 0;
@@ -217,10 +214,7 @@ void USART2_Send(char input)
 
  receiveUART.flag = 0;
 
- while(transmitUART.flag == 1)
- {
-
- }
+ while(transmitUART.flag == 1);
 
  transmitUART.byteCount = 0;
  transmitUART.buffer[transmitUART.byteCount] = input;
@@ -244,15 +238,15 @@ void send_SMS() {
  USART2_Send(cz);
 }
 
-void sendData(float temp, float hum, float pres) {
+void sendData(float temp, float hum, float pres, float dist) {
  uint32_t len, i;
- uint8_t txtTemp[10], txtHum[10], txtPres[10];
+ uint8_t txtTemp[10], txtHum[10], txtPres[10], txtDist[10];
  uint8_t url[150] = "AT+HTTPPARA=\"URL\",\"http://azaric.asuscomm.com:9998/mips/log?temp=";
  len = strlen(url);
  FloatToStr(temp, txtTemp);
-
  FloatToStr(hum, txtHum);
  FloatToStr(pres, txtPres);
+ FloatToStr(dist, txtDist);
  for (i = 0; i < strlen(txtTemp); i++) {
  if (txtTemp[i] == '\0') {
  break;
@@ -278,11 +272,15 @@ void sendData(float temp, float hum, float pres) {
  url[len++] = txtPres[i];
  }
 
+ url[len++] = '&';url[len++] = 'd';url[len++] = 'i';url[len++] = 's';url[len++] = 't';url[len++] = '=';
+
+ for (i = 0; i < strlen(txtDist); i++) {
+ if (txtDist[i] == '\0') {
+ break;
+ }
+ url[len++] = txtDist[i];
+ }
  url[len++] = '\"';url[len++] = '\r';url[len++] = '\n';url[len++] = '\0';
-
-
- DTR = 0;
- my_Delay_ms(50);
 
  USART2_Send_Text("AT+CREG?\r\n");
  my_Delay_ms( 1000 );
@@ -292,12 +290,14 @@ void sendData(float temp, float hum, float pres) {
  my_Delay_ms( 1000 );
  USART2_Send_Text("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"\r\n");
  my_Delay_ms( 1000 );
- USART2_Send_Text("AT+SAPBR=3,1,\"APN\",\"internet\"\r\n");
+
+ USART2_Send_Text("AT+SAPBR=3,1,\"APN\",\"gprswap\"\r\n");
  my_Delay_ms( 1000 );
- USART2_Send_Text("AT+SAPBR=3,1,\"PWD\",\"gprs\"\r\n");
+
+ USART2_Send_Text("AT+SAPBR=3,1,\"PWD\",\"064\"\r\n");
  my_Delay_ms( 1000 );
  USART2_Send_Text("AT+SAPBR=1,1\r\n");
- my_Delay_ms( 1000 );
+ my_Delay_ms(3* 1000 );
  USART2_Send_Text("AT+HTTPTERM\r\n");
  my_Delay_ms( 1000 );
  USART2_Send_Text("AT+HTTPINIT\r\n");
@@ -305,7 +305,6 @@ void sendData(float temp, float hum, float pres) {
  USART2_Send_Text("AT+HTTPPARA=\"CID\",1\r\n");
  my_Delay_ms( 1000 );
  USART2_Send_Text(url);
-
  my_Delay_ms( 1000 );
  USART2_Send_Text("AT+HTTPACTION=1\r\n");
  my_Delay_ms( 1000 );
@@ -314,9 +313,6 @@ void sendData(float temp, float hum, float pres) {
  USART2_Send_Text("AT+SAPBR=0,1\r\n");
  my_Delay_ms( 1000 );
  USART2_Send_Text("AT+CGATT=0\r\n");
- my_Delay_ms( 1000 );
-
-
- DTR = 1;
+ my_Delay_ms(5* 1000 );
 
 }

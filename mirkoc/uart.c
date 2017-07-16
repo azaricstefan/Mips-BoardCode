@@ -1,10 +1,9 @@
 #include "uart.h"
 
-sbit DTR at ODR11_GPIOD_ODR_bit;
+sbit RST at ODR11_GPIOD_ODR_bit;
 
 int32_t current = 0;
 int32_t received_flag = 0;
-int32_t kopirao = 0;
 
 
 /* Global Variables */
@@ -73,9 +72,9 @@ void USART2_Init()
   USART2_BRR |= _USART_BAUD_RATE;
   USART2_CR1 |= _USART_ENABLE | _USART_RXNEIE | _USART_TE | _USART_RE;
   my_Delay_ms(10);
-  
+  NVIC_SetIntPriority(IVT_INT_USART2, _NVIC_INT_PRIORITY_LVL0);
   GPIO_Digital_Output(&GPIOD_BASE, _GPIO_PINMASK_11);
-  DTR = 0;
+  RST=1;
 }
 
 void USART2_SendReceived()
@@ -113,10 +112,8 @@ void USART2_Send_Text(char* input)
 {
   char input_Char = 0x00;
 
-  while(transmitUART.flag == 1)
-  {
-  //BusyWait for transmit register to get empty
-  }
+  while(transmitUART.flag == 1);  //BusyWait for transmit register to get empty
+
   receiveUART.flag = 0;
 
   transmitUART.byteCount = 0;
@@ -142,10 +139,7 @@ void USART2_Send(char input)
   //USART2_CR1 &= ~_USART_TXEIE; //Enable TXE interrupt
   receiveUART.flag = 0;
 
-  while(transmitUART.flag == 1)
-  {
-  //BusyWait for transmit register to get empty
-  }
+  while(transmitUART.flag == 1);//BusyWait for transmit register to get empty
 
   transmitUART.byteCount = 0;
   transmitUART.buffer[transmitUART.byteCount] = input;
@@ -159,89 +153,91 @@ void USART2_Send(char input)
 }
 
 void send_SMS() {
-     int cz = 0x1A; // Ctrl + Z
-     USART2_Send_Text("AT+CMGF=1\r\n");
-     Delay_ms(1000);
-     USART2_Send_Text("AT+CMGS=\"+381642914005\"\r\n");
-     Delay_ms(1000);
-     USART2_Send_Text("TEST TEST");
-     Delay_ms(1000);
-     USART2_Send(cz);
+  int cz = 0x1A; // Ctrl + Z
+  USART2_Send_Text("AT+CMGF=1\r\n");
+  Delay_ms(1000);
+  USART2_Send_Text("AT+CMGS=\"+381642914005\"\r\n");
+  Delay_ms(1000);
+  USART2_Send_Text("TEST TEST");
+  Delay_ms(1000);
+  USART2_Send(cz);
 }
 
-void sendData(float temp, float hum, float pres) {
-     uint32_t len, i;
-     uint8_t txtTemp[10], txtHum[10], txtPres[10];
-     uint8_t url[150] = "AT+HTTPPARA=\"URL\",\"http://azaric.asuscomm.com:9998/mips/log?temp=";
-     len = strlen(url);
-     FloatToStr(temp, txtTemp);
-     //UART3_Write_Text(txtTemp);
-     FloatToStr(hum, txtHum);
-    FloatToStr(pres, txtPres);
-     for (i = 0; i < strlen(txtTemp); i++) {
-         if (txtTemp[i] == '\0') {
-            break;
-         }
-         url[len++] = txtTemp[i];
+void sendData(float temp, float hum, float pres, float dist) {
+   uint32_t len, i;
+   uint8_t txtTemp[10], txtHum[10], txtPres[10], txtDist[10];
+   uint8_t url[150] = "AT+HTTPPARA=\"URL\",\"http://azaric.asuscomm.com:9998/mips/log?temp=";
+   len = strlen(url);
+   FloatToStr(temp, txtTemp);
+   FloatToStr(hum, txtHum);
+   FloatToStr(pres, txtPres);
+   FloatToStr(dist, txtDist);
+   for (i = 0; i < strlen(txtTemp); i++) {
+     if (txtTemp[i] == '\0') {
+        break;
      }
+     url[len++] = txtTemp[i];
+   }
 
-     url[len++] = '&';url[len++] = 'h';url[len++] = 'u';url[len++] = 'm';url[len++] = '=';
+   url[len++] = '&';url[len++] = 'h';url[len++] = 'u';url[len++] = 'm';url[len++] = '=';
 
-     for (i = 0; i < strlen(txtHum); i++) {
-         if (txtHum[i] == '\0') {
-            break;
-         }
-         url[len++] = txtHum[i];
+   for (i = 0; i < strlen(txtHum); i++) {
+     if (txtHum[i] == '\0') {
+        break;
      }
-    
-    url[len++] = '&';url[len++] = 'p';url[len++] = 'r';url[len++] = 'e';url[len++] = 's';url[len++] = '=';
-    
-    for (i = 0; i < strlen(txtPres); i++) {
-        if (txtPres[i] == '\0') {
-            break;
-        }
-        url[len++] = txtPres[i];
+     url[len++] = txtHum[i];
+   }
+  
+  url[len++] = '&';url[len++] = 'p';url[len++] = 'r';url[len++] = 'e';url[len++] = 's';url[len++] = '=';
+  
+  for (i = 0; i < strlen(txtPres); i++) {
+    if (txtPres[i] == '\0') {
+        break;
     }
-    
-     url[len++] = '\"';url[len++] = '\r';url[len++] = '\n';url[len++] = '\0';
+    url[len++] = txtPres[i];
+  }
+  
+  url[len++] = '&';url[len++] = 'd';url[len++] = 'i';url[len++] = 's';url[len++] = 't';url[len++] = '=';
 
-     // wake up
-     DTR = 0;
-     my_Delay_ms(50);
+  for (i = 0; i < strlen(txtDist); i++) {
+    if (txtDist[i] == '\0') {
+        break;
+    }
+    url[len++] = txtDist[i];
+  }
+  url[len++] = '\"';url[len++] = '\r';url[len++] = '\n';url[len++] = '\0';
 
-     USART2_Send_Text("AT+CREG?\r\n");
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text("AT+CIPSHUT\r\n");
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text("AT+CGATT=1\r\n");
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"\r\n");
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text("AT+SAPBR=3,1,\"APN\",\"internet\"\r\n");
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text("AT+SAPBR=3,1,\"PWD\",\"gprs\"\r\n");
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text("AT+SAPBR=1,1\r\n");
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text("AT+HTTPTERM\r\n");
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text("AT+HTTPINIT\r\n");
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text("AT+HTTPPARA=\"CID\",1\r\n");
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text(url);
-     //UART3_Write_Text(url);
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text("AT+HTTPACTION=1\r\n");
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text("AT+CIPSHUT\r\n");
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text("AT+SAPBR=0,1\r\n");
-     my_Delay_ms(_TIMER_UART);
-     USART2_Send_Text("AT+CGATT=0\r\n");
-     my_Delay_ms(_TIMER_UART);
-     
-     // go to sleep
-     DTR = 1;
+  USART2_Send_Text("AT+CREG?\r\n");
+  my_Delay_ms(_TIMER_UART);
+  USART2_Send_Text("AT+CIPSHUT\r\n");
+  my_Delay_ms(_TIMER_UART);
+  USART2_Send_Text("AT+CGATT=1\r\n");
+  my_Delay_ms(_TIMER_UART);
+  USART2_Send_Text("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"\r\n");
+  my_Delay_ms(_TIMER_UART);
+  // USART2_Send_Text("AT+SAPBR=3,1,\"APN\",\"internet\"\r\n"); // telenor
+  USART2_Send_Text("AT+SAPBR=3,1,\"APN\",\"gprswap\"\r\n");  // mts
+  my_Delay_ms(_TIMER_UART);
+  // USART2_Send_Text("AT+SAPBR=3,1,\"PWD\",\"gprs\"\r\n"); // telenor
+  USART2_Send_Text("AT+SAPBR=3,1,\"PWD\",\"064\"\r\n"); // mts
+  my_Delay_ms(_TIMER_UART);
+  USART2_Send_Text("AT+SAPBR=1,1\r\n");
+  my_Delay_ms(3*_TIMER_UART);
+  USART2_Send_Text("AT+HTTPTERM\r\n");
+  my_Delay_ms(_TIMER_UART);
+  USART2_Send_Text("AT+HTTPINIT\r\n");
+  my_Delay_ms(_TIMER_UART);
+  USART2_Send_Text("AT+HTTPPARA=\"CID\",1\r\n");
+  my_Delay_ms(_TIMER_UART);
+  USART2_Send_Text(url);
+  my_Delay_ms(_TIMER_UART);
+  USART2_Send_Text("AT+HTTPACTION=1\r\n");
+  my_Delay_ms(_TIMER_UART);
+  USART2_Send_Text("AT+CIPSHUT\r\n");
+  my_Delay_ms(_TIMER_UART);
+  USART2_Send_Text("AT+SAPBR=0,1\r\n");
+  my_Delay_ms(_TIMER_UART);
+  USART2_Send_Text("AT+CGATT=0\r\n");
+  my_Delay_ms(5*_TIMER_UART);
 
 }

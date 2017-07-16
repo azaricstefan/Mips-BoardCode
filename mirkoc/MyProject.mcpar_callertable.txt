@@ -12,10 +12,21 @@ main
 			NVIC_SetIntPriority
 		initLCD
 			GPIO_Digital_Output
+			my_Delay_ms
+			Lcd_Cmd
+				Delay_1us
+				Delay_5500us
+				Delay_50us
+			Lcd_Out
+				Lcd_Cmd
+				Lcd_Chr_CP
+					Lcd_Cmd
 		USART2_Init
+			NVIC_SetIntPriority
 			my_Delay_ms
 			GPIO_Digital_Output
 		BME280_Init
+			NVIC_SetIntPriority
 			I2C2_Init_Advanced
 				I2Cx_Init_Advanced
 					RCC_GetClocksFrequency
@@ -51,28 +62,18 @@ main
 			GPIO_Digital_Output
 			GPIO_Digital_Input
 				GPIO_Config
-	showTempLCD
-		Lcd_Init
-			GPIO_Config
-			Delay_5500us
-			Delay_1us
-		my_Delay_ms
-		Lcd_Cmd
-			Delay_1us
-			Delay_5500us
-			Delay_50us
-		FloatToStr
-			strcpy
-		Lcd_Out
-			Lcd_Cmd
-			Lcd_Chr_CP
-				Lcd_Cmd
-	my_Delay_ms
-	getDistance
-		my_Delay_us
 Timer2_interrupt
 Timer3_interrupt
 interRTC
+	getPressure
+		getTemperature
+			BME_Read
+				I2C2_Start
+				I2C2_Write
+				I2C2_Read
+			BME280_compensate_T_int32
+		BME_Read
+		BME280_compensate_P_int32
 	calcTemp
 		oneWireReset
 			GPIO_Digital_Output
@@ -93,21 +94,13 @@ interRTC
 		my_Delay_ms
 		GPIO_Digital_Input
 		my_Delay_us
-	getPressure
-		getTemperature
-			BME_Read
-				I2C2_Start
-				I2C2_Write
-				I2C2_Read
-			BME280_compensate_T_int32
-		BME_Read
-		BME280_compensate_P_int32
-	showTempLCD
+	getDistance
+		my_Delay_us
 	sendData
 		__CC2DW
 		strlen
 		FloatToStr
-		my_Delay_ms
+			strcpy
 		USART2_Send_Text
-	my_Delay_ms
+		my_Delay_ms
 interruptUART

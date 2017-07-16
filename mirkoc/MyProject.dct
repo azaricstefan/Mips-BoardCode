@@ -11159,7 +11159,7 @@ discnum2
 discnum2_adc2_cr1_bit
 discnum2_adc3_cr1_bit
 discnum2_bit
-distance
+dist
 div_0_trp
 div_0_trp
 div_0_trp_bit
@@ -12939,7 +12939,6 @@ dtimeoutie_bit
 dtmode
 dtmode
 dtmode_bit
-dtr
 du
 du
 du
@@ -28336,7 +28335,6 @@ key8_iwdg_kr_bit
 key9
 key9_bit
 key9_iwdg_kr_bit
-kopirao
 l
 l
 l
@@ -39965,6 +39963,7 @@ rsf
 rsf
 rsf_bit
 rsf_ethernet_dma_dmaomr_bit
+rst
 rswtc
 rswtc0
 rswtc0_bit

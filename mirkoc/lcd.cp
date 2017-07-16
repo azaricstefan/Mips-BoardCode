@@ -51,7 +51,7 @@ typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
 #line 1 "c:/code/tamara latest/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 6 "c:/code/tamara latest/timer.h"
+#line 7 "c:/code/tamara latest/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -62,13 +62,13 @@ void RTCInit(void);
 #line 7 "c:/code/tamara latest/lcd.h"
 void showTempLCD(float temp, float hum);
 void initLCD();
-#line 3 "C:/Code/Tamara latest/lcd.c"
-sbit LCD_RS at GPIOB_ODR.B11;
-sbit LCD_EN at GPIOB_ODR.B10;
-sbit LCD_D4 at GPIOA_ODR.B0;
-sbit LCD_D5 at GPIOA_ODR.B1;
-sbit LCD_D6 at GPIOC_ODR.B13;
-sbit LCD_D7 at GPIOD_ODR.B7;
+#line 10 "C:/Code/Tamara latest/lcd.c"
+sbit LCD_RS at GPIOD_ODR.B7;
+sbit LCD_EN at GPIOC_ODR.B13;
+sbit LCD_D4 at GPIOA_ODR.B1;
+sbit LCD_D5 at GPIOA_ODR.B0;
+sbit LCD_D6 at GPIOB_ODR.B10;
+sbit LCD_D7 at GPIOB_ODR.B11;
 
 const int DELAY_LCD = 100;
 
@@ -77,8 +77,6 @@ void showTempLCD(float temp, float hum)
  uint8_t txtTemp[15];
  uint8_t txtHum[15];
 
- Lcd_Init();
- my_Delay_ms(DELAY_LCD);
  Lcd_Cmd(_LCD_CLEAR);
  Lcd_Cmd(_LCD_CURSOR_OFF);
 
@@ -92,9 +90,14 @@ void showTempLCD(float temp, float hum)
 
 void initLCD()
 {
- GPIO_Digital_Output(&GPIOE_BASE, _GPIO_PINMASK_15 | _GPIO_PINMASK_12);
  GPIO_Digital_Output(&GPIOA_BASE, _GPIO_PINMASK_0 | _GPIO_PINMASK_1);
  GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_10 | _GPIO_PINMASK_11);
  GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_13);
  GPIO_Digital_Output(&GPIOD_BASE, _GPIO_PINMASK_7);
+ my_Delay_ms(DELAY_LCD);
+ Lcd_Cmd(_LCD_CLEAR);
+ Lcd_Cmd(_LCD_CURSOR_OFF);
+
+ Lcd_Out(1,1,"App start");
+
 }
