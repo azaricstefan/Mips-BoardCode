@@ -20,6 +20,7 @@ public class LogDataServlet extends HttpServlet {
         String temp = request.getParameter("temp");
         String hum = request.getParameter("hum");
         String pres = request.getParameter("pres");
+        String dist = request.getParameter("dist");
         if ("".equals(temp)){
             temp = null;
         }
@@ -28,12 +29,19 @@ public class LogDataServlet extends HttpServlet {
             hum = null;
         }
         
+        if ("".equals(pres)){
+            pres = null;
+        }
+        
+        if ("".equals(dist)){
+            dist = null;
+        }
         Connection connection = null;
         Statement st = null;
         try {
             connection = DB.getInstance().getConnection();
             st = connection.createStatement();
-            String query = "INSERT INTO temp_hum(temp, hum, pres) VALUES(" + Double.parseDouble(temp) + ", " + Double.parseDouble(hum) + ", " + Double.parseDouble(pres) +")";
+            String query = "INSERT INTO temp_hum(temp, hum,pres,dist) VALUES(" + Double.parseDouble(temp) + ", " + Double.parseDouble(hum) + ", " + Double.parseDouble(pres) + ", " + Double.parseDouble(dist) + ")";
             st.executeUpdate(query);
         } catch (SQLException | NumberFormatException | NullPointerException ex) {
             Logger.getLogger(LogDataServlet.class.getName()).log(Level.SEVERE, null, ex);
