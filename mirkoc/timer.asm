@@ -56,7 +56,7 @@ SXTB	R1, R1
 MOVW	R0, #lo_addr(TIM2_SR+0)
 MOVT	R0, #hi_addr(TIM2_SR+0)
 STR	R1, [R0, #0]
-;timer.c,21 :: 		if(tick_us<1000000000)
+;timer.c,21 :: 		if(tick_us<_MAX_TIME_CALC)
 MOVW	R0, #lo_addr(_tick_us+0)
 MOVT	R0, #hi_addr(_tick_us+0)
 LDR	R1, [R0, #0]
@@ -159,7 +159,7 @@ SXTB	R1, R1
 MOVW	R0, #lo_addr(TIM3_SR+0)
 MOVT	R0, #hi_addr(TIM3_SR+0)
 STR	R1, [R0, #0]
-;timer.c,45 :: 		if(tick_ms<1000000000)
+;timer.c,45 :: 		if(tick_ms<_MAX_TIME_CALC)
 MOVW	R0, #lo_addr(_tick_ms+0)
 MOVT	R0, #hi_addr(_tick_ms+0)
 LDR	R1, [R0, #0]
@@ -311,7 +311,7 @@ MOVW	R0, #lo_addr(RTC_CR+0)
 MOVT	R0, #hi_addr(RTC_CR+0)
 STR	R2, [R0, #0]
 ;timer.c,75 :: 		RTC_WUTR = _RTC_TIME; // Set timer period in seconds
-MOVS	R1, #60
+MOVS	R1, #90
 MOVW	R0, #lo_addr(RTC_WUTR+0)
 MOVT	R0, #hi_addr(RTC_WUTR+0)
 STR	R1, [R0, #0]

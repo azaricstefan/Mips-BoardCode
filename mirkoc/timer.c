@@ -18,7 +18,7 @@ void InitTimerUs(){
 
 void Timer2_interrupt() iv IVT_INT_TIM2 {
   TIM2_SR.UIF = 0;
-  if(tick_us<1000000000)
+  if(tick_us<_MAX_TIME_CALC)
     tick_us++;
 }
 
@@ -42,7 +42,7 @@ void InitTimerMs(){
 
 void Timer3_interrupt() iv IVT_INT_TIM3 {
   TIM3_SR.UIF = 0;
-  if(tick_ms<1000000000)
+  if(tick_ms<_MAX_TIME_CALC)
     tick_ms++;
 }
 

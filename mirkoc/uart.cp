@@ -1,5 +1,5 @@
-#line 1 "C:/Code/Tamara latest/uart.c"
-#line 1 "c:/code/tamara latest/uart.h"
+#line 1 "C:/Code/MMT koji ne radi/uart.c"
+#line 1 "c:/code/mmt koji ne radi/uart.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 
 
@@ -49,9 +49,9 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 1 "c:/code/tamara latest/timer.h"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 7 "c:/code/tamara latest/timer.h"
+#line 8 "c:/code/mmt koji ne radi/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -59,52 +59,83 @@ void my_Delay_ms(uint32_t num);
 void InitTimerMs();
 
 void RTCInit(void);
-#line 36 "c:/code/tamara latest/uart.h"
-typedef struct StructUART {
+#line 37 "c:/code/mmt koji ne radi/uart.h"
+typedef struct TransmitStructUART {
  uint8_t flag;
  uint16_t byteCount;
  uint16_t bufferPointer;
- uint8_t buffer[1600];
-} StructUART;
+ uint8_t buffer[1000];
+} TransmitStructUART;
 
-
-extern volatile StructUART transmitUART, receiveUART;
+typedef struct ReceiveStructUART {
+ uint8_t flag;
+ uint16_t msgCount;
+ uint16_t bufferPointerWrite;
+ uint16_t bufferPointerRead;
+ uint8_t buffer[1000];
+} ReceiveStructUART;
 
 void USART2_Send_Text(uint8_t* input);
 void USART2_Init();
-void sendData(float temp, float hum, float pres, float dist);
+uint8_t sendData(float temp, float hum, float pres, float dist);
 void send_SMS();
-#line 3 "C:/Code/Tamara latest/uart.c"
-sbit RST at ODR11_GPIOD_ODR_bit;
+#line 3 "C:/Code/MMT koji ne radi/uart.c"
+uint8_t receivedFlag = 0;
+uint8_t receivedTxt[300];
 
-int32_t current = 0;
-int32_t received_flag = 0;
+volatile TransmitStructUART transmitUART;
+volatile ReceiveStructUART receiveUART;
+
+void USART2_Init()
+{
+
+ RCC_AHB1ENR |=  0x00000008UL ;
+ RCC_APB1ENR |=  0x00020000UL ;
+ my_Delay_ms( 10 );
 
 
+ GPIOD_MODER |=  0x00002000UL  |  0x00000800UL ;
+ GPIOD_OSPEEDR |=  0x00003000UL  |  0x00000C00UL ;
+ GPIOD_AFRL |=  0x07000000UL  |  0x00700000UL ;
+ NVIC_IPR9 |=  0x00000000UL ;
+ NVIC_ISER1 |=  0x00000040UL ;
+ USART2_BRR |=  0x00000C35UL ;
+ USART2_CR1 |=  0x00002000UL  |  0x00000020UL  |  0x00000008UL  |  0x00000004UL ;
+ my_Delay_ms( 10 );
+ NVIC_SetIntPriority(IVT_INT_USART2, _NVIC_INT_PRIORITY_LVL0);
 
-volatile StructUART transmitUART, receiveUART;
 
+ receiveUART.flag = 0;
+ receiveUART.bufferPointerWrite = 0;
+ receiveUART.bufferPointerRead = 0;
+ receiveUART.msgCount=0;
+ transmitUART.flag = 0;
+ transmitUART.byteCount = 0;
+ transmitUART.bufferPointer = 0;
+}
 
 void interruptUART() iv IVT_INT_USART2 ics ICS_AUTO
 {
  uint32_t usartStatusRegister, usartDataRegister;
-
  usartStatusRegister = USART2_SR;
 
  if(usartStatusRegister &  0x00000020UL )
  {
  receiveUART.flag = 1;
-
  usartDataRegister = USART2_DR;
- receiveUART.buffer[receiveUART.bufferPointer++] = usartDataRegister;
- ++receiveUART.byteCount;
- received_flag = 1;
+ receiveUART.buffer[receiveUART.bufferPointerWrite] = usartDataRegister;
+ receiveUART.bufferPointerWrite++;
+ if(receiveUART.bufferPointerWrite==1000)
+ receiveUART.bufferPointerWrite=0;
+ if(usartDataRegister==0x0A)
+ {
+ receiveUART.msgCount++;
  receiveUART.flag = 0;
+ }
  }
 
  if(usartStatusRegister &  0x00000080UL )
  {
-
  if(transmitUART.bufferPointer < transmitUART.byteCount)
  USART2_DR = transmitUART.buffer[transmitUART.bufferPointer++];
  else
@@ -115,81 +146,37 @@ void interruptUART() iv IVT_INT_USART2 ics ICS_AUTO
  transmitUART.flag = 0;
  }
  }
-
- if(usartStatusRegister &  0x00000008UL )
- {
-
- usartDataRegister = USART2_DR;
- }
 }
 
-void USART2_Init()
+void USART2_Receive()
 {
-
- receiveUART.flag = 0;
- receiveUART.byteCount = 0;
- receiveUART.bufferPointer = 0;
- transmitUART.flag = 0;
- transmitUART.byteCount = 0;
- transmitUART.bufferPointer = 0;
-
-
- RCC_AHB1ENR |=  0x00000008UL ;
- RCC_APB1ENR |=  0x00020000UL ;
- delay_ms(10);
-
-
- GPIOD_MODER |=  0x00002000UL  |  0x00000800UL ;
- GPIOD_OSPEEDR |=  0x00003000UL  |  0x00000C00UL ;
- GPIOD_AFRL |=  0x07000000UL  |  0x00700000UL ;
- NVIC_IPR9 |=  0x00000000UL ;
- NVIC_ISER1 |=  0x00000040UL ;
- USART2_BRR |=  0x00000C35UL ;
- USART2_CR1 |=  0x00002000UL  |  0x00000020UL  |  0x00000008UL  |  0x00000004UL ;
- my_Delay_ms(10);
- NVIC_SetIntPriority(IVT_INT_USART2, _NVIC_INT_PRIORITY_LVL0);
- GPIO_Digital_Output(&GPIOD_BASE, _GPIO_PINMASK_11);
- RST=1;
+ int32_t current;
+ if(receiveUART.msgCount>0)
+ {
+ current=0;
+ receiveUART.msgCount--;
+ while(receiveUART.buffer[receiveUART.bufferPointerRead]!=0x0A)
+ {
+ receivedTxt[current]=receiveUART.buffer[receiveUART.bufferPointerRead++];
+ current++;
+ if(receiveUART.bufferPointerRead==1000)
+ receiveUART.bufferPointerRead=0;
+ }
+ receiveUART.bufferPointerRead++;
+ if(receiveUART.bufferPointerRead==1000)
+ receiveUART.bufferPointerRead=0;
+ receivedTxt[current]=0;
+ receivedFlag=1;
+ }
+ else
+ receivedFlag=0;
 }
 
-void USART2_SendReceived()
+void USART2_Send_Text(uint8_t* input)
 {
- receiveUART.flag = 0;
- if(received_flag==1)
- {
- transmitUART.byteCount = 3;
- transmitUART.buffer[0] = 0x0A;
- transmitUART.buffer[1] = 'R';
- transmitUART.buffer[2] = ':';
- for(current=0; current<receiveUART.byteCount; current++)
- {
- transmitUART.buffer[transmitUART.byteCount] = receiveUART.buffer[current];
- ++transmitUART.byteCount;
- }
- receiveUART.bufferPointer = 0;
- receiveUART.byteCount = 0;
-
- transmitUART.buffer[transmitUART.byteCount] = 0x0A;
- ++transmitUART.byteCount;
-
- received_flag = 0;
-
- transmitUART.bufferPointer = 0;
-
- transmitUART.flag = 1;
- USART2_DR = transmitUART.buffer[transmitUART.bufferPointer++];
- USART2_CR1 |=  0x00000080UL ;
- }
- receiveUART.flag = 1;
-}
-
-void USART2_Send_Text(char* input)
-{
- char input_Char = 0x00;
-
+ uint8_t input_Char;
+ int32_t current;
  while(transmitUART.flag == 1);
-
- receiveUART.flag = 0;
 
  transmitUART.byteCount = 0;
  input_Char = *input;
@@ -210,24 +197,21 @@ void USART2_Send_Text(char* input)
 
 void USART2_Send(char input)
 {
- uint16_t reg = USART2_CR1;
-
- receiveUART.flag = 0;
-
  while(transmitUART.flag == 1);
 
  transmitUART.byteCount = 0;
  transmitUART.buffer[transmitUART.byteCount] = input;
  ++transmitUART.byteCount;
- transmitUART.bufferPointer = 0;
 
+ transmitUART.bufferPointer = 0;
 
  transmitUART.flag = 1;
  USART2_DR = transmitUART.buffer[transmitUART.bufferPointer++];
  USART2_CR1 |=  0x00000080UL ;
 }
 
-void send_SMS() {
+
+void sendSMS() {
  int cz = 0x1A;
  USART2_Send_Text("AT+CMGF=1\r\n");
  Delay_ms(1000);
@@ -238,7 +222,29 @@ void send_SMS() {
  USART2_Send(cz);
 }
 
-void sendData(float temp, float hum, float pres, float dist) {
+uint8_t getReceiveTxt()
+{
+ USART2_Receive();
+ while(receivedFlag==1)
+ USART2_Receive();
+}
+
+uint8_t checkReceiveTxt()
+{
+ uint8_t ok=0;
+ uint32_t current;
+ USART2_Receive();
+ while(receivedFlag==1)
+ {
+ for(current=1; receivedTxt[current]!=0; current++)
+ if((receivedTxt[current-1]=='O')&& (receivedTxt[current]=='K'))
+ ok=1;
+ USART2_Receive();
+ }
+ return ok;
+}
+
+uint8_t sendData(float temp, float hum, float pres, float dist) {
  uint32_t len, i;
  uint8_t txtTemp[10], txtHum[10], txtPres[10], txtDist[10];
  uint8_t url[150] = "AT+HTTPPARA=\"URL\",\"http://azaric.asuscomm.com:9998/mips/log?temp=";
@@ -248,71 +254,96 @@ void sendData(float temp, float hum, float pres, float dist) {
  FloatToStr(pres, txtPres);
  FloatToStr(dist, txtDist);
  for (i = 0; i < strlen(txtTemp); i++) {
- if (txtTemp[i] == '\0') {
+ if (txtTemp[i] == '\0')
  break;
- }
  url[len++] = txtTemp[i];
  }
 
  url[len++] = '&';url[len++] = 'h';url[len++] = 'u';url[len++] = 'm';url[len++] = '=';
 
  for (i = 0; i < strlen(txtHum); i++) {
- if (txtHum[i] == '\0') {
+ if (txtHum[i] == '\0')
  break;
- }
  url[len++] = txtHum[i];
  }
 
  url[len++] = '&';url[len++] = 'p';url[len++] = 'r';url[len++] = 'e';url[len++] = 's';url[len++] = '=';
 
  for (i = 0; i < strlen(txtPres); i++) {
- if (txtPres[i] == '\0') {
+ if (txtPres[i] == '\0')
  break;
- }
  url[len++] = txtPres[i];
  }
 
  url[len++] = '&';url[len++] = 'd';url[len++] = 'i';url[len++] = 's';url[len++] = 't';url[len++] = '=';
 
  for (i = 0; i < strlen(txtDist); i++) {
- if (txtDist[i] == '\0') {
+ if (txtDist[i] == '\0')
  break;
- }
  url[len++] = txtDist[i];
  }
  url[len++] = '\"';url[len++] = '\r';url[len++] = '\n';url[len++] = '\0';
 
- USART2_Send_Text("AT+CREG?\r\n");
- my_Delay_ms( 1000 );
+ USART2_Send_Text("AT+CPIN?\r\n");
+ my_Delay_ms( 3000 );
+ if(checkReceiveTxt()==0) return 0;
  USART2_Send_Text("AT+CIPSHUT\r\n");
- my_Delay_ms( 1000 );
+ my_Delay_ms( 3000 );
+ if(checkReceiveTxt()==0) return 0;
+
  USART2_Send_Text("AT+CGATT=1\r\n");
- my_Delay_ms( 1000 );
+ my_Delay_ms( 3000 );
+ if(checkReceiveTxt()==0) return 0;
+
  USART2_Send_Text("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"\r\n");
- my_Delay_ms( 1000 );
+ my_Delay_ms( 3000 );
+ if(checkReceiveTxt()==0) return 0;
 
- USART2_Send_Text("AT+SAPBR=3,1,\"APN\",\"gprswap\"\r\n");
- my_Delay_ms( 1000 );
+ USART2_Send_Text("AT+SAPBR=3,1,\"APN\",\"internet\"\r\n");
 
- USART2_Send_Text("AT+SAPBR=3,1,\"PWD\",\"064\"\r\n");
- my_Delay_ms( 1000 );
+ my_Delay_ms( 3000 );
+ if(checkReceiveTxt()==0) return 0;
+
+ USART2_Send_Text("AT+SAPBR=3,1,\"PWD\",\"gprs\"\r\n");
+
+ my_Delay_ms( 3000 );
+ if(checkReceiveTxt()==0) return 0;
+
  USART2_Send_Text("AT+SAPBR=1,1\r\n");
- my_Delay_ms(3* 1000 );
- USART2_Send_Text("AT+HTTPTERM\r\n");
- my_Delay_ms( 1000 );
- USART2_Send_Text("AT+HTTPINIT\r\n");
- my_Delay_ms( 1000 );
- USART2_Send_Text("AT+HTTPPARA=\"CID\",1\r\n");
- my_Delay_ms( 1000 );
- USART2_Send_Text(url);
- my_Delay_ms( 1000 );
- USART2_Send_Text("AT+HTTPACTION=1\r\n");
- my_Delay_ms( 1000 );
- USART2_Send_Text("AT+CIPSHUT\r\n");
- my_Delay_ms( 1000 );
- USART2_Send_Text("AT+SAPBR=0,1\r\n");
- my_Delay_ms( 1000 );
- USART2_Send_Text("AT+CGATT=0\r\n");
- my_Delay_ms(5* 1000 );
+ my_Delay_ms(3* 3000 );
+ if(checkReceiveTxt()==0) return 0;
 
+ USART2_Send_Text("AT+HTTPTERM\r\n");
+ my_Delay_ms( 3000 );
+ getReceiveTxt();
+
+ USART2_Send_Text("AT+HTTPINIT\r\n");
+ my_Delay_ms( 3000 );
+ if(checkReceiveTxt()==0) return 0;
+
+ USART2_Send_Text("AT+HTTPPARA=\"CID\",1\r\n");
+ my_Delay_ms( 3000 );
+ if(checkReceiveTxt()==0) return 0;
+
+ USART2_Send_Text(url);
+ my_Delay_ms( 3000 );
+ if(checkReceiveTxt()==0) return 0;
+
+ USART2_Send_Text("AT+HTTPACTION=1\r\n");
+ my_Delay_ms( 3000 );
+ if(checkReceiveTxt()==0) return 0;
+
+ USART2_Send_Text("AT+CIPSHUT\r\n");
+ my_Delay_ms( 3000 );
+ getReceiveTxt();
+
+ USART2_Send_Text("AT+SAPBR=0,1\r\n");
+ my_Delay_ms( 3000 );
+ getReceiveTxt();
+
+ USART2_Send_Text("AT+CGATT=0\r\n");
+ my_Delay_ms(3* 3000 );
+ getReceiveTxt();
+
+ return 1;
 }

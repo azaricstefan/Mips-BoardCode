@@ -3529,6 +3529,7 @@ bme_read_digu
 bme_write
 bme280_compensate_p_int32
 bme280_compensate_t_int32
+bme280_forced_mode
 bme280_init
 bna
 bna
@@ -4271,7 +4272,8 @@ btf_i2c2_sr1_bit
 buffer
 buffer
 bufferpointer
-bufferpointer
+bufferpointerread
+bufferpointerwrite
 bursten
 bursten
 bursten
@@ -4392,7 +4394,6 @@ byte36
 byte36_bit
 byte37
 byte37_bit
-bytecount
 bytecount
 bytetohex
 bytetostr
@@ -7128,6 +7129,7 @@ chdis_otg_hs_hcchar6_bit
 chdis_otg_hs_hcchar7_bit
 chdis_otg_hs_hcchar8_bit
 chdis_otg_hs_hcchar9_bit
+checkreceivetxt
 chekxforevent
 chena
 chena
@@ -8014,6 +8016,7 @@ cnt
 cnt
 cnt
 cnt
+cnt
 cnt_h
 cnt_h
 cnt_h
@@ -8536,6 +8539,7 @@ cont
 cont_adc2_cr2_bit
 cont_adc3_cr2_bit
 cont_bit
+conv
 countflag
 countflag
 countflag_bit
@@ -8614,6 +8618,7 @@ crc_dr
 crc_drbits
 crc_idr
 crc_idrbits
+crc8
 crcen
 crcen
 crcen
@@ -8941,7 +8946,6 @@ ctxpkt
 ctxpkt
 ctxpkt_bit
 ctxpkt_otg_hs_gusbcfg_bit
-current
 current
 current0
 current0_bit
@@ -9453,6 +9457,7 @@ daif_bit
 data
 data
 data
+data_
 data0
 data0
 data0
@@ -10999,7 +11004,6 @@ delay_5ms
 delay_80us
 delay_8ms
 delay_cyc
-delay_lcd
 delay0
 delay0_bit
 delay1
@@ -23294,6 +23298,7 @@ gencall_i2c2_sr2_bit
 get_fosc_khz
 getdistance
 getpressure
+getreceivetxt
 gettemperature
 ginakeff
 ginakeff
@@ -28757,7 +28762,9 @@ lckk_gpiof_lckr_bit
 lckk_gpiog_lckr_bit
 lckk_gpioh_lckr_bit
 ld1
+ld11
 ld2
+ld22
 lec
 lec
 lec
@@ -32291,6 +32298,7 @@ mr9
 mr9
 mr9_bit
 mr9_exti_emr_bit
+msgcount
 msize
 msize
 msize
@@ -34205,6 +34213,7 @@ ois4
 ois4
 ois4_bit
 ois4_tim8_cr2_bit
+ok
 omfc
 omfc
 omfc_bit
@@ -35720,6 +35729,7 @@ otgint_bit
 otgint_otg_fs_gintmsk_bit
 otgint_otg_hs_gintmsk_bit
 otgint_otg_hs_gintsts_bit
+output
 over8
 over8
 over8
@@ -39344,7 +39354,8 @@ rec7_can1_esr_bit
 recalpf
 recalpf
 recalpf_bit
-received_flag
+receivedflag
+receivedtxt
 receiveuart
 refckon
 refckon
@@ -39963,7 +39974,6 @@ rsf
 rsf
 rsf_bit
 rsf_ethernet_dma_dmaomr_bit
-rst
 rswtc
 rswtc0
 rswtc0_bit
@@ -40597,6 +40607,7 @@ scen_bit
 scen_usart1_cr3_bit
 scen_usart2_cr3_bit
 scen_usart3_cr3_bit
+scratchpad
 sd0pid_sevnfrm
 sd0pid_sevnfrm
 sd0pid_sevnfrm
@@ -40707,8 +40718,8 @@ sedet_otg_hs_gotgint_bit
 seis
 seis
 seis_bit
-send_sms
 senddata
+sendsms
 ser
 ser
 ser_bit
@@ -46335,9 +46346,9 @@ usart2_drbits
 usart2_gtpr
 usart2_gtprbits
 usart2_init
+usart2_receive
 usart2_send
 usart2_send_text
-usart2_sendreceived
 usart2_sr
 usart2_srbits
 usart2en

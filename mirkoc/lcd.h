@@ -4,6 +4,8 @@
 #include "stdint.h"
 #include "timer.h"
 
+#define DELAY_LCD   100
+
 void showTempLCD(float temp, float hum);
 void initLCD();
 

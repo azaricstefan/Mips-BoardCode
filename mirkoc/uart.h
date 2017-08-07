@@ -4,7 +4,7 @@
 #include "stdint.h"
 #include "timer.h"
 
-#define     _TIMER_UART                     1000
+#define     _TIMER_UART                     3000
 
 
 /* UART Initialization Constants */
@@ -32,19 +32,25 @@
 #define     _USART_SR_ORE                   0x00000008UL
 #define     _USART_SR_ERRORS                0x0000000BUL
 
-/* Type definitions */
-typedef struct StructUART {
+#define     _UART_INIT_DELAY                10
+
+typedef struct TransmitStructUART {
         uint8_t flag;
         uint16_t byteCount;
         uint16_t bufferPointer;
-        uint8_t buffer[1600];
-} StructUART;
+        uint8_t buffer[1000];
+} TransmitStructUART;
 
-/* Global Variables */
-extern volatile StructUART transmitUART, receiveUART;
+typedef struct ReceiveStructUART {
+    uint8_t flag;
+    uint16_t msgCount;
+    uint16_t bufferPointerWrite;
+    uint16_t bufferPointerRead;
+    uint8_t buffer[1000];
+} ReceiveStructUART;
 
 void USART2_Send_Text(uint8_t* input);
 void USART2_Init();
-void sendData(float temp, float hum, float pres, float dist);
+uint8_t sendData(float temp, float hum, float pres, float dist);
 void send_SMS();
 #endif
