@@ -131,6 +131,8 @@ float calcTemp()
 		measureTime = _WAIT_FOR_MESURING_x16;
   }
   
+  test = oneWireReset();
+  oneWireWrite(0xCC);          //SKIP ROM
   oneWireWrite(0x44);          //CALC_TEMP
   my_Delay_ms(measureTime);     // Vreme merenja
   test = oneWireReset();
