@@ -4,6 +4,7 @@ sbit OWDI at IDR1_GPIOB_IDR_bit;
 sbit OWDO at ODR1_GPIOB_ODR_bit;
 
 uint8_t scratchpad[9];
+static uint8_t precision = 16;
 
 uint8_t crc8()
 {
@@ -103,12 +104,35 @@ float calcTemp()
   float tempF;
   int32_t temp;
   uint8_t test, i,res;
+  int measureTime;
 
   temp = 0;
   test = oneWireReset();
   oneWireWrite(0xCC);          //SKIP ROM
+  
+  oneWireWrite(0x4E);   // WRITE SCRATCHPAD from byte 2 to 5 (2,3,4)
+  oneWireWrite(0x00);   // Alarm TH
+  oneWireWrite(0x00);   // Alarm TL
+  switch(precision) {
+	  case _DOUBLE_PRECISION:
+		oneWireWrite(_DOUBLE_PRECISION_CODED);
+		measureTime = _WAIT_FOR_MESURING_x2;
+		break;
+	case _FOUR_PRECISION:
+		oneWireWrite(_FOUR_PRECISION_CODED);
+		measureTime = _WAIT_FOR_MESURING_x4;
+		break;
+	case _EIGHT_PRECISION:
+		oneWireWrite(_EIGHT_PRECISION_CODED);
+		measureTime = _WAIT_FOR_MESURING_x8
+		break;
+	default:
+		oneWireWrite(_SIXTEEN_PRECISION_CODED);
+		measureTime = _WAIT_FOR_MESURING_x16;
+  }
+  
   oneWireWrite(0x44);          //CALC_TEMP
-  my_Delay_ms(_WAIT_FOR_INIT_TIME);     // Vreme merenja
+  my_Delay_ms(measureTime);     // Vreme merenja
   test = oneWireReset();
   oneWireWrite(0xCC);          //SKIP ROM
   oneWireWrite(0xBE);          //READ SCRATCHPAD
@@ -137,4 +161,8 @@ float calcTemp()
   }
   tempF=temp*1.0/16.0;
   return tempF;
+}
+
+void setPrecision(uint8_t precision_) {
+	precision = precision_;
 }
