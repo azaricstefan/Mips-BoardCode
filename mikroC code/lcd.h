@@ -9,5 +9,6 @@
 void showTempLCD(float temp, float hum);
 void initLCD();
 
+void showText(uint8_t* text);
 
 #endif

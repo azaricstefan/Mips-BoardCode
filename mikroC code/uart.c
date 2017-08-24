@@ -1,5 +1,5 @@
 #include "uart.h"
-
+#include "lcd.h"
 uint8_t receivedFlag = 0;
 uint8_t receivedTxt[300];
 
@@ -86,10 +86,65 @@ void USART2_Receive()
     if(receiveUART.bufferPointerRead==1000)
         receiveUART.bufferPointerRead=0;
     receivedTxt[current]=0;
+    //showText(receivedTxt);
+    my_Delay_ms(1000);
     receivedFlag=1;
   }
   else
     receivedFlag=0;
+}
+
+void checkReceivedMsg(uint8_t* txt)
+{
+     if(txt[0]=='+' && txt[1]=='C' &&   txt[2]=='M' && txt[3]=='T' && txt[4]=='I' && txt[5]==':' && txt[6]==':' && txt[7]==' ' &&  txt[8]=='"' &&
+     txt[9]=='S' && txt[10]=='M' && txt[11]=='"' && txt[12]==',')
+     {
+      int num=0;
+      int pos=13;
+      while(txt[pos]!='\r')
+      {
+        num=num*10+txt[pos]-'0';
+        pos++;
+      }
+      
+     }
+}
+void receive_SMS()
+{
+     USART2_Receive();
+     my_Delay_ms(_TIMER_UART);
+     if(receivedFlag==1)// && receivedTxt[0]=='+' && receivedTxt[1]=='C' &&   receivedTxt[2]=='M' && receivedTxt[3]=='G' && receivedTxt[4]=='L' && receivedTxt[5]==':')
+     {
+       int pos=0;
+       int numQuote=0;
+       char number[20];
+       int posNum=0;
+     /*  while(numQuote<3)
+       {
+         if(receivedTxt[pos]=='"')
+           numQuote++;
+         pos++;
+       }
+       while(receivedTxt[pos]!='"')
+       {
+         number[posNum]=receivedTxt[pos];
+         posNum++;
+         pos++;
+       }
+       numQuote++;
+       pos++;
+       number[posNum]=0;*/
+       sendSMS(number);
+     }
+     
+}
+
+void sms(){
+     USART2_Send_Text("AT+CMGL=\"ALL\"\r\n");
+     receive_SMS();
+     while(receivedFlag==1)
+       receive_SMS();
+     USART2_Send_Text("AT+CMGD=1,4\r\n");
 }
 
 void USART2_Send_Text(uint8_t* input)
@@ -131,13 +186,30 @@ void USART2_Send(char input)
 }
 
 
-void sendSMS() {
+void sendSMS(char* number) {
   int cz = 0x1A; // Ctrl + Z
+  int pos=9;
+  int posNum=0;
+  char txtNum[50];
   USART2_Send_Text("AT+CMGF=1\r\n");
   Delay_ms(1000);
+  txtNum[0]='A';  txtNum[1]='T';   txtNum[2]='+';   txtNum[3]='C';   txtNum[4]='M';  txtNum[5]='G';   txtNum[6]='S';  txtNum[7]='=';  txtNum[8]='"';
+  while(number[posNum]!=0)
+  {
+    txtNum[pos]=number[posNum];
+    pos++;
+    posNum++;
+  }
+  txtNum[pos++]='"';
+  txtNum[pos++]='\r';
+  txtNum[pos++]='\n';
+  txtNum[pos++]='\0';
+  //USART2_Send_Text(txtNum);
   USART2_Send_Text("AT+CMGS=\"+381642914005\"\r\n");
   Delay_ms(1000);
-  USART2_Send_Text("TEST TEST");
+  USART2_Send_Text(receivedTxt);
+ // Delay_ms(1000);
+  //USART2_Send_Text(receivedTxt);
   Delay_ms(1000);
   USART2_Send(cz); 
 }
@@ -219,13 +291,13 @@ uint8_t sendData(float temp, float hum, float pres, float dist) {
   my_Delay_ms(_TIMER_UART);
   if(checkReceiveTxt()==0) return 0;
 
-  // USART2_Send_Text("AT+SAPBR=3,1,\"APN\",\"internet\"\r\n"); // telenor
-  USART2_Send_Text("AT+SAPBR=3,1,\"APN\",\"gprswap\"\r\n");  // mts
+  USART2_Send_Text("AT+SAPBR=3,1,\"APN\",\"internet\"\r\n"); // telenor
+  //USART2_Send_Text("AT+SAPBR=3,1,\"APN\",\"gprswap\"\r\n");  // mts
   my_Delay_ms(_TIMER_UART);
   if(checkReceiveTxt()==0) return 0;
     
-  // USART2_Send_Text("AT+SAPBR=3,1,\"PWD\",\"gprs\"\r\n"); // telenor
-  USART2_Send_Text("AT+SAPBR=3,1,\"PWD\",\"064\"\r\n"); // mts
+  USART2_Send_Text("AT+SAPBR=3,1,\"PWD\",\"gprs\"\r\n"); // telenor
+  //USART2_Send_Text("AT+SAPBR=3,1,\"PWD\",\"064\"\r\n"); // mts
   my_Delay_ms(_TIMER_UART);
   if(checkReceiveTxt()==0) return 0;
     
@@ -255,15 +327,15 @@ uint8_t sendData(float temp, float hum, float pres, float dist) {
     
   USART2_Send_Text("AT+CIPSHUT\r\n");
   my_Delay_ms(_TIMER_UART);
-  if(checkReceiveTxt()==0) return 0;
+  getReceiveTxt();
     
   USART2_Send_Text("AT+SAPBR=0,1\r\n");
   my_Delay_ms(_TIMER_UART);
-  if(checkReceiveTxt()==0) return 0;
+  getReceiveTxt();
     
   USART2_Send_Text("AT+CGATT=0\r\n");
   my_Delay_ms(3*_TIMER_UART);
-  if(checkReceiveTxt()==0) return 0;
+  getReceiveTxt();
    
   return 1;
 }

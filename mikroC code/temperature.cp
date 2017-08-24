@@ -1,5 +1,5 @@
-#line 1 "C:/Users/tasha/Desktop/UART receive debug/temperature.c"
-#line 1 "c:/users/tasha/desktop/uart receive debug/temperature.h"
+#line 1 "C:/Code/MMT koji ne radi/temperature.c"
+#line 1 "c:/code/mmt koji ne radi/temperature.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 
 
@@ -49,9 +49,9 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 1 "c:/users/tasha/desktop/uart receive debug/timer.h"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 8 "c:/users/tasha/desktop/uart receive debug/timer.h"
+#line 8 "c:/code/mmt koji ne radi/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -59,19 +59,21 @@ void my_Delay_ms(uint32_t num);
 void InitTimerMs();
 
 void RTCInit(void);
-#line 20 "c:/users/tasha/desktop/uart receive debug/temperature.h"
+#line 20 "c:/code/mmt koji ne radi/temperature.h"
 uint8_t oneWireReset();
 void oneWireWrite(uint8_t byte);
 unsigned short oneWireRead();
 
 float calcTemp();
-#line 1 "c:/users/tasha/desktop/uart receive debug/lcd.h"
+#line 1 "c:/code/mmt koji ne radi/lcd.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 1 "c:/users/tasha/desktop/uart receive debug/timer.h"
-#line 9 "c:/users/tasha/desktop/uart receive debug/lcd.h"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
+#line 9 "c:/code/mmt koji ne radi/lcd.h"
 void showTempLCD(float temp, float hum);
 void initLCD();
-#line 3 "C:/Users/tasha/Desktop/UART receive debug/temperature.c"
+
+void showText(uint8_t* text);
+#line 3 "C:/Code/MMT koji ne radi/temperature.c"
 sbit OWDI at IDR1_GPIOB_IDR_bit;
 sbit OWDO at ODR1_GPIOB_ODR_bit;
 
@@ -189,7 +191,7 @@ float calcTemp()
  {
  scratchpad[i]=oneWireRead();
  }
-
+#line 126 "C:/Code/MMT koji ne radi/temperature.c"
  temp=scratchpad[0];
  temp=temp+(scratchpad[1]<<8);
  res= crc8();

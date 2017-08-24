@@ -1,5 +1,5 @@
-#line 1 "C:/Users/tasha/Desktop/UART receive debug/timer.c"
-#line 1 "c:/users/tasha/desktop/uart receive debug/timer.h"
+#line 1 "C:/Code/MMT koji ne radi/timer.c"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 
 
@@ -49,7 +49,7 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 8 "c:/users/tasha/desktop/uart receive debug/timer.h"
+#line 8 "c:/code/mmt koji ne radi/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -57,7 +57,7 @@ void my_Delay_ms(uint32_t num);
 void InitTimerMs();
 
 void RTCInit(void);
-#line 3 "C:/Users/tasha/Desktop/UART receive debug/timer.c"
+#line 3 "C:/Code/MMT koji ne radi/timer.c"
 volatile uint32_t tick_us;
 volatile uint32_t tick_ms;
 
@@ -130,7 +130,7 @@ void RTCInit(void) {
  while (RTC_ISR.WUTWF!=1)
  ;
  RTC_CR.WUTIE = 1;
- RTC_WUTR =  300 ;
+ RTC_WUTR =  90 ;
  RTC_CR |= (0x00000004);
  RTC_CR.WUTE = 1;
 

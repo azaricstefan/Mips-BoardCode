@@ -1,5 +1,5 @@
-#line 1 "C:/Users/tasha/Desktop/UART receive debug/ultrasonic.c"
-#line 1 "c:/users/tasha/desktop/uart receive debug/ultrasonic.h"
+#line 1 "C:/Code/MMT koji ne radi/ultrasonic.c"
+#line 1 "c:/code/mmt koji ne radi/ultrasonic.h"
 
 
 
@@ -12,7 +12,7 @@
 
 void initUltrasonic();
 double getDistance();
-#line 1 "c:/users/tasha/desktop/uart receive debug/timer.h"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 
 
@@ -62,7 +62,7 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 8 "c:/users/tasha/desktop/uart receive debug/timer.h"
+#line 8 "c:/code/mmt koji ne radi/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -70,7 +70,7 @@ void my_Delay_ms(uint32_t num);
 void InitTimerMs();
 
 void RTCInit(void);
-#line 4 "C:/Users/tasha/Desktop/UART receive debug/ultrasonic.c"
+#line 4 "C:/Code/MMT koji ne radi/ultrasonic.c"
 sbit TRIG at ODR14_GPIOB_ODR_bit;
 sbit ECHO at IDR15_GPIOB_IDR_bit;
 

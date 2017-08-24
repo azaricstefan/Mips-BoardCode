@@ -1,5 +1,5 @@
-#line 1 "C:/Users/tasha/Desktop/UART receive debug/uart.c"
-#line 1 "c:/users/tasha/desktop/uart receive debug/uart.h"
+#line 1 "C:/Code/MMT koji ne radi/uart.c"
+#line 1 "c:/code/mmt koji ne radi/uart.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 
 
@@ -49,9 +49,9 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 1 "c:/users/tasha/desktop/uart receive debug/timer.h"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 8 "c:/users/tasha/desktop/uart receive debug/timer.h"
+#line 8 "c:/code/mmt koji ne radi/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -59,7 +59,7 @@ void my_Delay_ms(uint32_t num);
 void InitTimerMs();
 
 void RTCInit(void);
-#line 37 "c:/users/tasha/desktop/uart receive debug/uart.h"
+#line 37 "c:/code/mmt koji ne radi/uart.h"
 typedef struct TransmitStructUART {
  uint8_t flag;
  uint16_t byteCount;
@@ -78,8 +78,17 @@ typedef struct ReceiveStructUART {
 void USART2_Send_Text(uint8_t* input);
 void USART2_Init();
 uint8_t sendData(float temp, float hum, float pres, float dist);
-void send_SMS();
-#line 3 "C:/Users/tasha/Desktop/UART receive debug/uart.c"
+void sendSMS(char* number);
+void sms();
+#line 1 "c:/code/mmt koji ne radi/lcd.h"
+#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
+#line 9 "c:/code/mmt koji ne radi/lcd.h"
+void showTempLCD(float temp, float hum);
+void initLCD();
+
+void showText(uint8_t* text);
+#line 3 "C:/Code/MMT koji ne radi/uart.c"
 uint8_t receivedFlag = 0;
 uint8_t receivedTxt[300];
 
@@ -166,10 +175,51 @@ void USART2_Receive()
  if(receiveUART.bufferPointerRead==1000)
  receiveUART.bufferPointerRead=0;
  receivedTxt[current]=0;
+
+ my_Delay_ms(1000);
  receivedFlag=1;
  }
  else
  receivedFlag=0;
+}
+
+void checkReceivedMsg(uint8_t* txt)
+{
+ if(txt[0]=='+' && txt[1]=='C' && txt[2]=='M' && txt[3]=='T' && txt[4]=='I' && txt[5]==':' && txt[6]==':' && txt[7]==' ' && txt[8]=='"' &&
+ txt[9]=='S' && txt[10]=='M' && txt[11]=='"' && txt[12]==',')
+ {
+ int num=0;
+ int pos=13;
+ while(txt[pos]!='\r')
+ {
+ num=num*10+txt[pos]-'0';
+ pos++;
+ }
+
+ }
+}
+void receive_SMS()
+{
+ USART2_Receive();
+ my_Delay_ms( 3000 );
+ if(receivedFlag==1)
+ {
+ int pos=0;
+ int numQuote=0;
+ char number[20];
+ int posNum=0;
+#line 137 "C:/Code/MMT koji ne radi/uart.c"
+ sendSMS(number);
+ }
+
+}
+
+void sms(){
+ USART2_Send_Text("AT+CMGL=\"ALL\"\r\n");
+ receive_SMS();
+ while(receivedFlag==1)
+ receive_SMS();
+ USART2_Send_Text("AT+CMGD=1,4\r\n");
 }
 
 void USART2_Send_Text(uint8_t* input)
@@ -211,13 +261,30 @@ void USART2_Send(char input)
 }
 
 
-void sendSMS() {
+void sendSMS(char* number) {
  int cz = 0x1A;
+ int pos=9;
+ int posNum=0;
+ char txtNum[50];
  USART2_Send_Text("AT+CMGF=1\r\n");
  Delay_ms(1000);
+ txtNum[0]='A'; txtNum[1]='T'; txtNum[2]='+'; txtNum[3]='C'; txtNum[4]='M'; txtNum[5]='G'; txtNum[6]='S'; txtNum[7]='='; txtNum[8]='"';
+ while(number[posNum]!=0)
+ {
+ txtNum[pos]=number[posNum];
+ pos++;
+ posNum++;
+ }
+ txtNum[pos++]='"';
+ txtNum[pos++]='\r';
+ txtNum[pos++]='\n';
+ txtNum[pos++]='\0';
+
  USART2_Send_Text("AT+CMGS=\"+381642914005\"\r\n");
  Delay_ms(1000);
- USART2_Send_Text("TEST TEST");
+ USART2_Send_Text(receivedTxt);
+
+
  Delay_ms(1000);
  USART2_Send(cz);
 }
@@ -299,13 +366,13 @@ uint8_t sendData(float temp, float hum, float pres, float dist) {
  my_Delay_ms( 3000 );
  if(checkReceiveTxt()==0) return 0;
 
+ USART2_Send_Text("AT+SAPBR=3,1,\"APN\",\"internet\"\r\n");
 
- USART2_Send_Text("AT+SAPBR=3,1,\"APN\",\"gprswap\"\r\n");
  my_Delay_ms( 3000 );
  if(checkReceiveTxt()==0) return 0;
 
+ USART2_Send_Text("AT+SAPBR=3,1,\"PWD\",\"gprs\"\r\n");
 
- USART2_Send_Text("AT+SAPBR=3,1,\"PWD\",\"064\"\r\n");
  my_Delay_ms( 3000 );
  if(checkReceiveTxt()==0) return 0;
 
@@ -335,15 +402,15 @@ uint8_t sendData(float temp, float hum, float pres, float dist) {
 
  USART2_Send_Text("AT+CIPSHUT\r\n");
  my_Delay_ms( 3000 );
- if(checkReceiveTxt()==0) return 0;
+ getReceiveTxt();
 
  USART2_Send_Text("AT+SAPBR=0,1\r\n");
  my_Delay_ms( 3000 );
- if(checkReceiveTxt()==0) return 0;
+ getReceiveTxt();
 
  USART2_Send_Text("AT+CGATT=0\r\n");
  my_Delay_ms(3* 3000 );
- if(checkReceiveTxt()==0) return 0;
+ getReceiveTxt();
 
  return 1;
 }

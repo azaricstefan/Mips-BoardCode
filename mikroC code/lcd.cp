@@ -1,5 +1,5 @@
-#line 1 "C:/Users/tasha/Desktop/UART receive debug/lcd.c"
-#line 1 "c:/users/tasha/desktop/uart receive debug/lcd.h"
+#line 1 "C:/Code/MMT koji ne radi/lcd.c"
+#line 1 "c:/code/mmt koji ne radi/lcd.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 
 
@@ -49,9 +49,9 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 1 "c:/users/tasha/desktop/uart receive debug/timer.h"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 8 "c:/users/tasha/desktop/uart receive debug/timer.h"
+#line 8 "c:/code/mmt koji ne radi/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -59,10 +59,12 @@ void my_Delay_ms(uint32_t num);
 void InitTimerMs();
 
 void RTCInit(void);
-#line 9 "c:/users/tasha/desktop/uart receive debug/lcd.h"
+#line 9 "c:/code/mmt koji ne radi/lcd.h"
 void showTempLCD(float temp, float hum);
 void initLCD();
-#line 3 "C:/Users/tasha/Desktop/UART receive debug/lcd.c"
+
+void showText(uint8_t* text);
+#line 3 "C:/Code/MMT koji ne radi/lcd.c"
 sbit LCD_RS at GPIOD_ODR.B7;
 sbit LCD_EN at GPIOC_ODR.B13;
 sbit LCD_D4 at GPIOA_ODR.B1;
@@ -77,7 +79,7 @@ void showTempLCD(float temp, float hum)
  uint8_t txtTemp[15];
  uint8_t txtHum[15];
  Lcd_Init();
- my_Delay_ms( 100 );
+ My_Delay_ms( 100 );
  Lcd_Cmd(_LCD_CLEAR);
  Lcd_Cmd(_LCD_CURSOR_OFF);
 
@@ -87,6 +89,15 @@ void showTempLCD(float temp, float hum)
  Lcd_Out(2,1,"Hum:");
  Lcd_Out(1,7,txtTemp);
  Lcd_Out(2,7,txtHum);
+}
+void showText(uint8_t* text)
+{
+ Lcd_Init();
+ My_Delay_ms( 100 );
+ Lcd_Cmd(_LCD_CLEAR);
+ Lcd_Cmd(_LCD_CURSOR_OFF);
+
+ Lcd_Out(1,1,text);
 }
 
 void initLCD()

@@ -6,7 +6,7 @@ Value=0
 [BUILD_TYPE]
 Value=0
 [ACTIVE_TAB]
-Value=timer.h
+Value=uart.c
 [USE_EEPROM]
 Value=0
 [USE_HEAP]
@@ -16,7 +16,6 @@ Value=2000
 [EEPROM_DEFINITION]
 Value=
 [FILES]
-Count=8
 File0=main.c
 File1=temperature.c
 File2=lcd.c
@@ -25,17 +24,24 @@ File4=timer.c
 File5=bme280.c
 File6=ultrasonic.c
 File7=humidity.c
+Count=8
 [BINARIES]
 Count=0
 [IMAGES]
 Count=0
 ActiveImageIndex=-1
 [OPENED_FILES]
-Count=4
 File0=main.c
-File1=lcd.c
-File2=timer.h
-File3=temperature.c
+File1=bme280.c
+File2=bme280.h
+File3=uart.h
+File4=uart.c
+File5=temperature.c
+File6=timer.c
+File7=timer.h
+File8=lcd.c
+File9=lcd.h
+Count=10
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]
@@ -43,16 +49,10 @@ Count=0
 [OTHER_FILES]
 Count=0
 [SEARCH_PATH]
-Count=4
-Path0=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for ARM\Defs\
-Path1=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for ARM\Uses\
-Path2=C:\Users\tasha\Desktop\UART receive debug\
-Path3=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for ARM\Uses\ST M4\
+Count=0
 [HEADER_PATH]
-Count=1
-Path0=C:\Users\tasha\Desktop\UART receive debug\
+Count=0
 [HEADERS]
-Count=7
 File0=temperature.h
 File1=lcd.h
 File2=uart.h
@@ -60,20 +60,22 @@ File3=timer.h
 File4=bme280.h
 File5=ultrasonic.h
 File6=humidity.h
+Count=7
 [PLDS]
 Count=0
 [Useses]
-Count=6
 File0=Lcd
 File1=Lcd_Constants
 File2=UART
 File3=Conversions
 File4=C_String
 File5=I2C
+Count=6
 [EXPANDED_NODES]
-Node0=Sources
-Node1=Header Files
-Count=2
+0=MyProject.mcpar
+1=Sources
+10=Header Files
+Count=3
 [PROGRAMMER_OPTIONS]
 Value=SWD
 [PROGRAMMER_TYPE]

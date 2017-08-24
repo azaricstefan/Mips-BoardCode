@@ -14,7 +14,7 @@ void showTempLCD(float temp, float hum)
   uint8_t txtTemp[15];
   uint8_t txtHum[15];
   Lcd_Init();
-  my_Delay_ms(DELAY_LCD);
+  My_Delay_ms(DELAY_LCD);
   Lcd_Cmd(_LCD_CLEAR);
   Lcd_Cmd(_LCD_CURSOR_OFF);
 
@@ -24,6 +24,15 @@ void showTempLCD(float temp, float hum)
   Lcd_Out(2,1,"Hum:");
   Lcd_Out(1,7,txtTemp);
   Lcd_Out(2,7,txtHum);   
+}
+void showText(uint8_t* text)
+{
+  Lcd_Init();
+  My_Delay_ms(DELAY_LCD);
+  Lcd_Cmd(_LCD_CLEAR);
+  Lcd_Cmd(_LCD_CURSOR_OFF);
+
+  Lcd_Out(1,1,text);
 }
 
 void initLCD()

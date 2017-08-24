@@ -3529,6 +3529,7 @@ bme_read_digu
 bme_write
 bme280_compensate_p_int32
 bme280_compensate_t_int32
+bme280_forced_mode
 bme280_init
 bna
 bna
@@ -7128,6 +7129,7 @@ chdis_otg_hs_hcchar6_bit
 chdis_otg_hs_hcchar7_bit
 chdis_otg_hs_hcchar8_bit
 chdis_otg_hs_hcchar9_bit
+checkreceivedmsg
 checkreceivetxt
 chekxforevent
 chena
@@ -8538,6 +8540,7 @@ cont
 cont_adc2_cr2_bit
 cont_adc3_cr2_bit
 cont_bit
+conv
 countflag
 countflag
 countflag_bit
@@ -9455,6 +9458,7 @@ daif_bit
 data
 data
 data
+data_
 data0
 data0
 data0
@@ -28759,7 +28763,9 @@ lckk_gpiof_lckr_bit
 lckk_gpiog_lckr_bit
 lckk_gpioh_lckr_bit
 ld1
+ld11
 ld2
+ld22
 lec
 lec
 lec
@@ -35724,6 +35730,7 @@ otgint_bit
 otgint_otg_fs_gintmsk_bit
 otgint_otg_hs_gintmsk_bit
 otgint_otg_hs_gintsts_bit
+output
 over8
 over8
 over8
@@ -39348,6 +39355,7 @@ rec7_can1_esr_bit
 recalpf
 recalpf
 recalpf_bit
+receive_sms
 receivedflag
 receivedtxt
 receiveuart
@@ -40068,6 +40076,7 @@ rtc0
 rtc0_bit
 rtc1
 rtc1_bit
+rtcbool
 rtcen
 rtcen
 rtcen_bit
@@ -41000,6 +41009,7 @@ shorttohex
 shorttostr
 shorttostrwithzeros
 showtemplcd
+showtext
 shpf
 shpf
 shpf_bit
@@ -41310,6 +41320,7 @@ smpx_x9_adc2_smpr2_bit
 smpx_x9_adc3_smpr1_bit
 smpx_x9_adc3_smpr2_bit
 smpx_x9_bit
+sms
 sms
 sms
 sms

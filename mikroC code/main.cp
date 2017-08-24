@@ -1,5 +1,5 @@
-#line 1 "C:/Users/tasha/Desktop/UART receive debug/main.c"
-#line 1 "c:/users/tasha/desktop/uart receive debug/lcd.h"
+#line 1 "C:/Code/MMT koji ne radi/main.c"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 
 
@@ -49,9 +49,7 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 1 "c:/users/tasha/desktop/uart receive debug/timer.h"
-#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 8 "c:/users/tasha/desktop/uart receive debug/timer.h"
+#line 8 "c:/code/mmt koji ne radi/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -59,13 +57,27 @@ void my_Delay_ms(uint32_t num);
 void InitTimerMs();
 
 void RTCInit(void);
-#line 9 "c:/users/tasha/desktop/uart receive debug/lcd.h"
+#line 1 "c:/code/mmt koji ne radi/temperature.h"
+#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
+#line 20 "c:/code/mmt koji ne radi/temperature.h"
+uint8_t oneWireReset();
+void oneWireWrite(uint8_t byte);
+unsigned short oneWireRead();
+
+float calcTemp();
+#line 1 "c:/code/mmt koji ne radi/lcd.h"
+#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
+#line 9 "c:/code/mmt koji ne radi/lcd.h"
 void showTempLCD(float temp, float hum);
 void initLCD();
-#line 1 "c:/users/tasha/desktop/uart receive debug/uart.h"
+
+void showText(uint8_t* text);
+#line 1 "c:/code/mmt koji ne radi/uart.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 1 "c:/users/tasha/desktop/uart receive debug/timer.h"
-#line 37 "c:/users/tasha/desktop/uart receive debug/uart.h"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
+#line 37 "c:/code/mmt koji ne radi/uart.h"
 typedef struct TransmitStructUART {
  uint8_t flag;
  uint16_t byteCount;
@@ -84,14 +96,41 @@ typedef struct ReceiveStructUART {
 void USART2_Send_Text(uint8_t* input);
 void USART2_Init();
 uint8_t sendData(float temp, float hum, float pres, float dist);
-void send_SMS();
-#line 8 "C:/Users/tasha/Desktop/UART receive debug/main.c"
+void sendSMS(char* number);
+void sms();
+#line 1 "c:/code/mmt koji ne radi/bme280.h"
+#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
+#line 40 "c:/code/mmt koji ne radi/bme280.h"
+void BME280_Init();
+double getPressure();
+double getTemperature();
+#line 1 "c:/code/mmt koji ne radi/ultrasonic.h"
+
+
+
+
+
+
+
+
+
+
+void initUltrasonic();
+double getDistance();
+#line 1 "c:/code/mmt koji ne radi/humidity.h"
+#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
+#line 15 "c:/code/mmt koji ne radi/humidity.h"
+float calcHumTemp(uint8_t humB);
+#line 9 "C:/Code/MMT koji ne radi/main.c"
 sbit LD1 at ODR12_GPIOE_ODR_bit;
 sbit LD2 at ODR15_GPIOE_ODR_bit;
 
 float temp, hum, press, dist;
-uint8_t ok;
-uint8_t cnt;
+uint8_t ok, cnt;
+
+int8_t rtcBool;
+
 void initProg()
 {
  GPIO_Digital_Output(&GPIOE_BASE, _GPIO_PINMASK_15|_GPIO_PINMASK_12);
@@ -101,8 +140,10 @@ void initProg()
  TIM2_CR1.CEN = 1;
  TIM3_CR1.CEN = 1;
  initLCD();
-
-
+ initUltrasonic();
+ LD1=0; LD2=1;
+ BME280_Init();
+ LD1=0; LD2=0;
  USART2_Init();
  RTCInit();
  TIM2_CR1.CEN = 0;
@@ -117,33 +158,60 @@ void interRTC() iv IVT_INT_RTC_WKUP ics ICS_AUTO {
  EXTI_PR.PR22 = 1;
  while (RTC_ISR.RSF!=1);
 
+ rtcBool=1;
+}
+
+void main() {
+ GPIO_Digital_Output(&GPIOE_BASE, _GPIO_PINMASK_15|_GPIO_PINMASK_12);
+ LD1=1;
+ initProg();
+
+ LD1=1; LD2=1;
+ TIM2_CR1.CEN = 1;
+ TIM3_CR1.CEN = 1;
+ showText("pocni");
+ sms();
+ showText("kraj");
+ TIM2_CR1.CEN = 0;
+ TIM3_CR1.CEN = 0;
+ while(1)
+ {
+#line 71 "C:/Code/MMT koji ne radi/main.c"
+ asm {WFI};
+ TIM2_CR1.CEN = 1;
+ TIM3_CR1.CEN = 1;
+ showText("pocni");
+ sms();
+ showText("kraj");
+ TIM2_CR1.CEN = 0;
+ TIM3_CR1.CEN = 0;
+ if(rtcBool==1)
+ {
  LD1=0; LD2=0;
  cnt=10;
  ok=0;
+ press=getPressure();
+ LD1=1; LD2=0;
 
  TIM2_CR1.CEN = 1;
  TIM3_CR1.CEN = 1;
 
+ temp=calcTemp();
 
-
- showTempLCD(temp,hum);
+ hum=calcHumTemp(1);
+ dist=getDistance();
+ LD1=0; LD2=1;
+ showTempLCD(temp,press);
  ok=0;
  while(ok==0 && cnt>0)
  {
  ok=sendData(temp, hum, press,dist);
+ showTempLCD(ok,cnt);
  cnt--;
  }
  TIM2_CR1.CEN = 0;
  TIM3_CR1.CEN = 0;
  LD1=1; LD2=1;
-}
-
-void main() {
-LD1=1;
- initProg();
- LD1=1; LD2=1;
- while(1)
- {
- asm {WFI};
+ }
  }
 }

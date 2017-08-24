@@ -1,5 +1,5 @@
-#line 1 "C:/Users/tasha/Desktop/UART receive debug/humidity.c"
-#line 1 "c:/users/tasha/desktop/uart receive debug/humidity.h"
+#line 1 "C:/Code/MMT koji ne radi/humidity.c"
+#line 1 "c:/code/mmt koji ne radi/humidity.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 
 
@@ -49,9 +49,9 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 1 "c:/users/tasha/desktop/uart receive debug/timer.h"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 8 "c:/users/tasha/desktop/uart receive debug/timer.h"
+#line 8 "c:/code/mmt koji ne radi/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -59,9 +59,9 @@ void my_Delay_ms(uint32_t num);
 void InitTimerMs();
 
 void RTCInit(void);
-#line 15 "c:/users/tasha/desktop/uart receive debug/humidity.h"
+#line 15 "c:/code/mmt koji ne radi/humidity.h"
 float calcHumTemp(uint8_t humB);
-#line 3 "C:/Users/tasha/Desktop/UART receive debug/humidity.c"
+#line 3 "C:/Code/MMT koji ne radi/humidity.c"
 sbit HUM_OUT at ODR1_GPIOC_ODR_bit;
 sbit HUM_IN at IDR1_GPIOC_IDR_bit;
 
