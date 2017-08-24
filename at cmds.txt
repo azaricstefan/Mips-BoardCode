@@ -1,0 +1,53 @@
+Setup Complete!
+AT
+
+OK
+AT+CPIN?
+
++CPIN: READY
+
+OK
+AT+CIPSHUT
+
+SHUT OK
+AT+CGATT=1
+
+OK
+AT+SAPBR=3,1,"CONTYPE","GPRS"
+
+OK
+AT+SAPBR=3,1,"APN","gprswap"
+
+OK
+AT+SAPBR=3,1,"PWD","064"
+
+OK
+AT+SAPBR=1,1
+
+OK
+AT+HTTPTERM
+
+ERROR
+AT+HTTPINIT
+
+OK
+AT+HTTPPARA="CID",1
+
+OK
+AT+HTTPPARA="URL","http://azaric.asuscomm.com:9998/mips/log?temp=63&hum=70&pres=101"
+
+OK
+AT+HTTPACTION=1
+
+OK
+
++HTTPACTION: 1,200,0
+AT+CIPSHUT
+
+SHUT OK
+AT+SAPBR=0,1
+
+OK
+AT+CGATT=0
+
+OK
