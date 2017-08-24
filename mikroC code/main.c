@@ -12,7 +12,7 @@ sbit LD2 at ODR15_GPIOE_ODR_bit;
 float temp, hum, press, dist;
 uint8_t ok, cnt;
 
-int8_t rtcBool;
+int8_t rtcCounter=_SEND_TIME_LAPS;
 
 void initProg()
 {
@@ -40,8 +40,45 @@ void interRTC() iv IVT_INT_RTC_WKUP ics ICS_AUTO {
   PWR_CR.DBP = 0;
   EXTI_PR.PR22 = 1; // Clear wake-up interrupt flag
   while (RTC_ISR.RSF!=1); // Wait for RTC APB registers synchronization
+  rtcCounter--;
   
-  rtcBool=1;
+  TIM2_CR1.CEN = 1;
+  TIM3_CR1.CEN = 1;
+  showText("pocni");
+  checkSMS();
+  showText("kraj");
+  TIM2_CR1.CEN = 0;
+  TIM3_CR1.CEN = 0;
+  
+  if(rtcCounter==0)
+  {
+    rtcCounter=_SEND_TIME_LAPS;
+    LD1=0; LD2=0;
+  	cnt=10;
+	ok=0;
+	press=getPressure();
+    LD1=1; LD2=0;
+
+    TIM2_CR1.CEN = 1;
+    TIM3_CR1.CEN = 1;
+
+    temp=calcTemp();
+
+    hum=calcHumTemp(1);
+    dist=getDistance();
+    LD1=0; LD2=1;
+    showTempLCD(temp,press);
+    ok=0;
+    while(ok==0 && cnt>0)
+    {
+      ok=sendData(temp, hum, press,dist);
+      showTempLCD(ok,cnt);
+      cnt--;
+    }
+    TIM2_CR1.CEN = 0;
+    TIM3_CR1.CEN = 0;
+    LD1=1; LD2=1;
+  }
 } 
 
 void main() {
@@ -50,59 +87,9 @@ void main() {
   initProg();
   // BME280_Init();
   LD1=1; LD2=1;
-  TIM2_CR1.CEN = 1;
-  TIM3_CR1.CEN = 1;
-   showText("pocni");
-   sms();
-   showText("kraj");
-     TIM2_CR1.CEN = 0;
-  TIM3_CR1.CEN = 0;
   while(1)
   {
-  /*
-  LD1=0; LD2=0;
-  showTempLCD(0,0);
-  Delay_ms(1000);
-  temp = getTemperature();
-  press=getPressure();
-  showTempLCD(temp,press);
-  LD1=1; LD2=1;
-  Delay_ms(3000); */
    asm {WFI};
-   TIM2_CR1.CEN = 1;
-   TIM3_CR1.CEN = 1;
-   showText("pocni");
-   sms();
-   showText("kraj");
-   TIM2_CR1.CEN = 0;
-   TIM3_CR1.CEN = 0;
-   if(rtcBool==1)
-    {
-      LD1=0; LD2=0;
-      cnt=10;
-      ok=0;
-      press=getPressure();
-      LD1=1; LD2=0;
 
-      TIM2_CR1.CEN = 1;
-      TIM3_CR1.CEN = 1;
-
-      temp=calcTemp();
-
-      hum=calcHumTemp(1);
-      dist=getDistance();
-      LD1=0; LD2=1;
-      showTempLCD(temp,press);
-      ok=0;
-      while(ok==0 && cnt>0)
-      {
-        ok=sendData(temp, hum, press,dist);
-        showTempLCD(ok,cnt);
-        cnt--;
-      }
-      TIM2_CR1.CEN = 0;
-      TIM3_CR1.CEN = 0;
-      LD1=1; LD2=1;
-  }
   }
 }
