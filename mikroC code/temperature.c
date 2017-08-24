@@ -118,19 +118,21 @@ float calcTemp()
 		oneWireWrite(_DOUBLE_PRECISION_CODED);
 		measureTime = _WAIT_FOR_MESURING_x2;
 		break;
-	case _FOUR_PRECISION:
+	case _FOUR__PRECISION:
 		oneWireWrite(_FOUR_PRECISION_CODED);
 		measureTime = _WAIT_FOR_MESURING_x4;
 		break;
 	case _EIGHT_PRECISION:
 		oneWireWrite(_EIGHT_PRECISION_CODED);
-		measureTime = _WAIT_FOR_MESURING_x8
+		measureTime = _WAIT_FOR_MESURING_x8;
 		break;
 	default:
 		oneWireWrite(_SIXTEEN_PRECISION_CODED);
 		measureTime = _WAIT_FOR_MESURING_x16;
   }
   
+  test = oneWireReset();
+  oneWireWrite(0xCC);          //SKIP ROM
   oneWireWrite(0x44);          //CALC_TEMP
   my_Delay_ms(measureTime);     // Vreme merenja
   test = oneWireReset();

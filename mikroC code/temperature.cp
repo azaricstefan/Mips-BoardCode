@@ -51,7 +51,7 @@ typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
 #line 1 "c:/code/mmt koji ne radi/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 8 "c:/code/mmt koji ne radi/timer.h"
+#line 9 "c:/code/mmt koji ne radi/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -59,12 +59,13 @@ void my_Delay_ms(uint32_t num);
 void InitTimerMs();
 
 void RTCInit(void);
-#line 20 "c:/code/mmt koji ne radi/temperature.h"
+#line 31 "c:/code/mmt koji ne radi/temperature.h"
 uint8_t oneWireReset();
 void oneWireWrite(uint8_t byte);
 unsigned short oneWireRead();
 
 float calcTemp();
+void setPrecision(uint8_t precision_);
 #line 1 "c:/code/mmt koji ne radi/lcd.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 #line 1 "c:/code/mmt koji ne radi/timer.h"
@@ -78,6 +79,7 @@ sbit OWDI at IDR1_GPIOB_IDR_bit;
 sbit OWDO at ODR1_GPIOB_ODR_bit;
 
 uint8_t scratchpad[9];
+static uint8_t precision = 16;
 
 uint8_t crc8()
 {
@@ -177,12 +179,37 @@ float calcTemp()
  float tempF;
  int32_t temp;
  uint8_t test, i,res;
+ int measureTime;
 
  temp = 0;
  test = oneWireReset();
  oneWireWrite(0xCC);
+
+ oneWireWrite(0x4E);
+ oneWireWrite(0x00);
+ oneWireWrite(0x00);
+ switch(precision) {
+ case  2 :
+ oneWireWrite( 0x1F );
+ measureTime =  100 ;
+ break;
+ case  4 :
+ oneWireWrite( 0x3F );
+ measureTime =  200 ;
+ break;
+ case  8 :
+ oneWireWrite( 0x5F );
+ measureTime =  400 ;
+ break;
+ default:
+ oneWireWrite( 0x7F );
+ measureTime =  750 ;
+ }
+
+ test = oneWireReset();
+ oneWireWrite(0xCC);
  oneWireWrite(0x44);
- my_Delay_ms( 750 );
+ my_Delay_ms(measureTime);
  test = oneWireReset();
  oneWireWrite(0xCC);
  oneWireWrite(0xBE);
@@ -191,7 +218,7 @@ float calcTemp()
  {
  scratchpad[i]=oneWireRead();
  }
-#line 126 "C:/Code/MMT koji ne radi/temperature.c"
+#line 152 "C:/Code/MMT koji ne radi/temperature.c"
  temp=scratchpad[0];
  temp=temp+(scratchpad[1]<<8);
  res= crc8();
@@ -206,4 +233,8 @@ float calcTemp()
  }
  tempF=temp*1.0/16.0;
  return tempF;
+}
+
+void setPrecision(uint8_t precision_) {
+ precision = precision_;
 }

@@ -311,7 +311,7 @@ MOVW	R0, #lo_addr(RTC_CR+0)
 MOVT	R0, #hi_addr(RTC_CR+0)
 STR	R2, [R0, #0]
 ;timer.c,75 :: 		RTC_WUTR = _RTC_TIME; // Set timer period in seconds
-MOVS	R1, #90
+MOVS	R1, #20
 MOVW	R0, #lo_addr(RTC_WUTR+0)
 MOVT	R0, #hi_addr(RTC_WUTR+0)
 STR	R1, [R0, #0]

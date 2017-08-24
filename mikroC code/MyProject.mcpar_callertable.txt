@@ -50,9 +50,13 @@ main
 		USART2_Init
 			NVIC_SetIntPriority
 			my_Delay_ms
+			USART2_Send_Text
 		RTCInit
 			NVIC_IntEnable
 			NVIC_SetIntPriority
+Timer2_interrupt
+Timer3_interrupt
+interRTC
 	showText
 		Lcd_Init
 			GPIO_Config
@@ -67,15 +71,22 @@ main
 			Lcd_Cmd
 			Lcd_Chr_CP
 				Lcd_Cmd
-	sms
+	checkSMS
 		USART2_Send_Text
+		my_Delay_ms
 		receive_SMS
 			USART2_Receive
-				my_Delay_ms
-			my_Delay_ms
+			showText
+			setPrecision
 			sendSMS
 				USART2_Send_Text
+				IntToStr
+					WordToStr
 				USART2_Send
+			strcpy
+			strlen
+			USART2_Send_Text
+			my_Delay_ms
 	getPressure
 		getTemperature
 			BME_Read
@@ -126,7 +137,4 @@ main
 			USART2_Receive
 		getReceiveTxt
 			USART2_Receive
-Timer2_interrupt
-Timer3_interrupt
-interRTC
 interruptUART

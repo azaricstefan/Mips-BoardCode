@@ -7129,8 +7129,8 @@ chdis_otg_hs_hcchar6_bit
 chdis_otg_hs_hcchar7_bit
 chdis_otg_hs_hcchar8_bit
 chdis_otg_hs_hcchar9_bit
-checkreceivedmsg
 checkreceivetxt
+checksms
 chekxforevent
 chena
 chena
@@ -40076,7 +40076,7 @@ rtc0
 rtc0_bit
 rtc1
 rtc1_bit
-rtcbool
+rtccounter
 rtcen
 rtcen
 rtcen_bit
@@ -40989,6 +40989,7 @@ setpend9
 setpend9_bit
 setpend9_nvic_ispr1_bit
 setpend9_nvic_ispr2_bit
+setprecision
 sevonpend
 sevonpend
 sevonpend_bit
@@ -41320,7 +41321,6 @@ smpx_x9_adc2_smpr2_bit
 smpx_x9_adc3_smpr1_bit
 smpx_x9_adc3_smpr2_bit
 smpx_x9_bit
-sms
 sms
 sms
 sms

@@ -49,7 +49,7 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 8 "c:/code/mmt koji ne radi/timer.h"
+#line 9 "c:/code/mmt koji ne radi/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -60,12 +60,13 @@ void RTCInit(void);
 #line 1 "c:/code/mmt koji ne radi/temperature.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 #line 1 "c:/code/mmt koji ne radi/timer.h"
-#line 20 "c:/code/mmt koji ne radi/temperature.h"
+#line 31 "c:/code/mmt koji ne radi/temperature.h"
 uint8_t oneWireReset();
 void oneWireWrite(uint8_t byte);
 unsigned short oneWireRead();
 
 float calcTemp();
+void setPrecision(uint8_t precision_);
 #line 1 "c:/code/mmt koji ne radi/lcd.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 #line 1 "c:/code/mmt koji ne radi/timer.h"
@@ -96,8 +97,8 @@ typedef struct ReceiveStructUART {
 void USART2_Send_Text(uint8_t* input);
 void USART2_Init();
 uint8_t sendData(float temp, float hum, float pres, float dist);
-void sendSMS(char* number);
-void sms();
+void sendSMS(char* number, int val);
+void checkSMS();
 #line 1 "c:/code/mmt koji ne radi/bme280.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 #line 40 "c:/code/mmt koji ne radi/bme280.h"
@@ -129,7 +130,7 @@ sbit LD2 at ODR15_GPIOE_ODR_bit;
 float temp, hum, press, dist;
 uint8_t ok, cnt;
 
-int8_t rtcBool;
+int8_t rtcCounter= 6 ;
 
 void initProg()
 {
@@ -157,36 +158,19 @@ void interRTC() iv IVT_INT_RTC_WKUP ics ICS_AUTO {
  PWR_CR.DBP = 0;
  EXTI_PR.PR22 = 1;
  while (RTC_ISR.RSF!=1);
+ rtcCounter--;
 
- rtcBool=1;
-}
-
-void main() {
- GPIO_Digital_Output(&GPIOE_BASE, _GPIO_PINMASK_15|_GPIO_PINMASK_12);
- LD1=1;
- initProg();
-
- LD1=1; LD2=1;
  TIM2_CR1.CEN = 1;
  TIM3_CR1.CEN = 1;
  showText("pocni");
- sms();
+ checkSMS();
  showText("kraj");
  TIM2_CR1.CEN = 0;
  TIM3_CR1.CEN = 0;
- while(1)
+
+ if(rtcCounter==0)
  {
-#line 71 "C:/Code/MMT koji ne radi/main.c"
- asm {WFI};
- TIM2_CR1.CEN = 1;
- TIM3_CR1.CEN = 1;
- showText("pocni");
- sms();
- showText("kraj");
- TIM2_CR1.CEN = 0;
- TIM3_CR1.CEN = 0;
- if(rtcBool==1)
- {
+ rtcCounter= 6 ;
  LD1=0; LD2=0;
  cnt=10;
  ok=0;
@@ -213,5 +197,17 @@ void main() {
  TIM3_CR1.CEN = 0;
  LD1=1; LD2=1;
  }
+}
+
+void main() {
+ GPIO_Digital_Output(&GPIOE_BASE, _GPIO_PINMASK_15|_GPIO_PINMASK_12);
+ LD1=1;
+ initProg();
+
+ LD1=1; LD2=1;
+ while(1)
+ {
+ asm {WFI};
+
  }
 }

@@ -6,7 +6,7 @@ Value=0
 [BUILD_TYPE]
 Value=0
 [ACTIVE_TAB]
-Value=uart.c
+Value=temperature.c
 [USE_EEPROM]
 Value=0
 [USE_HEAP]
@@ -41,7 +41,8 @@ File6=timer.c
 File7=timer.h
 File8=lcd.c
 File9=lcd.h
-Count=10
+File10=temperature.h
+Count=11
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]

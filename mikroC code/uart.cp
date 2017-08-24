@@ -51,7 +51,7 @@ typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
 #line 1 "c:/code/mmt koji ne radi/timer.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
-#line 8 "c:/code/mmt koji ne radi/timer.h"
+#line 9 "c:/code/mmt koji ne radi/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -78,8 +78,8 @@ typedef struct ReceiveStructUART {
 void USART2_Send_Text(uint8_t* input);
 void USART2_Init();
 uint8_t sendData(float temp, float hum, float pres, float dist);
-void sendSMS(char* number);
-void sms();
+void sendSMS(char* number, int val);
+void checkSMS();
 #line 1 "c:/code/mmt koji ne radi/lcd.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
 #line 1 "c:/code/mmt koji ne radi/timer.h"
@@ -88,7 +88,17 @@ void showTempLCD(float temp, float hum);
 void initLCD();
 
 void showText(uint8_t* text);
-#line 3 "C:/Code/MMT koji ne radi/uart.c"
+#line 1 "c:/code/mmt koji ne radi/temperature.h"
+#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for arm/include/stdint.h"
+#line 1 "c:/code/mmt koji ne radi/timer.h"
+#line 31 "c:/code/mmt koji ne radi/temperature.h"
+uint8_t oneWireReset();
+void oneWireWrite(uint8_t byte);
+unsigned short oneWireRead();
+
+float calcTemp();
+void setPrecision(uint8_t precision_);
+#line 5 "C:/Code/MMT koji ne radi/uart.c"
 uint8_t receivedFlag = 0;
 uint8_t receivedTxt[300];
 
@@ -121,6 +131,11 @@ void USART2_Init()
  transmitUART.flag = 0;
  transmitUART.byteCount = 0;
  transmitUART.bufferPointer = 0;
+
+ USART2_Send_Text("AT+CLCC\r\n");
+ my_Delay_ms( 3000 );
+ USART2_Send_Text("AT+CMGF=1\r\n");
+ my_Delay_ms( 3000 );
 }
 
 void interruptUART() iv IVT_INT_USART2 ics ICS_AUTO
@@ -175,51 +190,75 @@ void USART2_Receive()
  if(receiveUART.bufferPointerRead==1000)
  receiveUART.bufferPointerRead=0;
  receivedTxt[current]=0;
-
- my_Delay_ms(1000);
  receivedFlag=1;
  }
  else
  receivedFlag=0;
 }
 
-void checkReceivedMsg(uint8_t* txt)
-{
- if(txt[0]=='+' && txt[1]=='C' && txt[2]=='M' && txt[3]=='T' && txt[4]=='I' && txt[5]==':' && txt[6]==':' && txt[7]==' ' && txt[8]=='"' &&
- txt[9]=='S' && txt[10]=='M' && txt[11]=='"' && txt[12]==',')
- {
- int num=0;
- int pos=13;
- while(txt[pos]!='\r')
- {
- num=num*10+txt[pos]-'0';
- pos++;
- }
 
- }
-}
 void receive_SMS()
 {
  USART2_Receive();
- my_Delay_ms( 3000 );
- if(receivedFlag==1)
+ showText(receivedTxt);
+ if(receivedFlag==1 && receivedTxt[0]=='+' && receivedTxt[1]=='C' && receivedTxt[2]=='M' && receivedTxt[3]=='G' && receivedTxt[4]=='L' && receivedTxt[5]==':')
  {
  int pos=0;
  int numQuote=0;
  char number[20];
  int posNum=0;
-#line 137 "C:/Code/MMT koji ne radi/uart.c"
- sendSMS(number);
+ uint8_t tt[6];
+ uint8_t bufff[50];
+ pos = 6;
+ while(receivedTxt[pos] != ','){
+ tt[pos-6] = receivedTxt[pos];
+ pos++;
+ }
+ tt[pos-6] = 0;
+ while(numQuote<3)
+ {
+ if(receivedTxt[pos]=='"')
+ numQuote++;
+ pos++;
+ }
+ while(receivedTxt[pos]!='"')
+ {
+ number[posNum]=receivedTxt[pos];
+ posNum++;
+ pos++;
+ }
+ numQuote++;
+ pos++;
+ number[posNum]=0;
+ USART2_Receive();
+ showText(receivedTxt);
+ if(receivedFlag==1 && receivedTxt[0]=='p' && receivedTxt[1]=='r' && receivedTxt[2]=='e' && receivedTxt[3]=='c' && receivedTxt[4]==':')
+ {
+ int val=0;
+ int p=5;
+ while(receivedTxt[p]!='\r')
+ val=val*10+receivedTxt[p++]-'0';
+ setPrecision(val);
+ sendSMS(number, val);
+
+ }
+ strcpy(bufff, "AT+CMGD=");
+ strcpy(bufff+8, tt);
+ strcpy(bufff+8+strlen(tt),",0\r\n");
+ USART2_Send_Text(bufff);
+
+ my_Delay_ms(5000);
  }
 
 }
 
-void sms(){
- USART2_Send_Text("AT+CMGL=\"ALL\"\r\n");
+void checkSMS(){
+ USART2_Send_Text("AT+CMGL=\"REC UNREAD\"\r\n");
+ my_Delay_ms( 3000 );
  receive_SMS();
  while(receivedFlag==1)
  receive_SMS();
- USART2_Send_Text("AT+CMGD=1,4\r\n");
+
 }
 
 void USART2_Send_Text(uint8_t* input)
@@ -261,11 +300,12 @@ void USART2_Send(char input)
 }
 
 
-void sendSMS(char* number) {
+void sendSMS(char* number, int val) {
  int cz = 0x1A;
  int pos=9;
  int posNum=0;
  char txtNum[50];
+ uint8_t buffer[3];
  USART2_Send_Text("AT+CMGF=1\r\n");
  Delay_ms(1000);
  txtNum[0]='A'; txtNum[1]='T'; txtNum[2]='+'; txtNum[3]='C'; txtNum[4]='M'; txtNum[5]='G'; txtNum[6]='S'; txtNum[7]='='; txtNum[8]='"';
@@ -278,13 +318,14 @@ void sendSMS(char* number) {
  txtNum[pos++]='"';
  txtNum[pos++]='\r';
  txtNum[pos++]='\n';
- txtNum[pos++]='\0';
+ txtNum[pos++]=0;
+ USART2_Send_Text(txtNum);
 
- USART2_Send_Text("AT+CMGS=\"+381642914005\"\r\n");
  Delay_ms(1000);
- USART2_Send_Text(receivedTxt);
 
-
+ USART2_Send_Text("Promenjena preciznost na: 1/");
+ IntToStr(val,buffer);
+ USART2_Send_Text(buffer);
  Delay_ms(1000);
  USART2_Send(cz);
 }

@@ -49,7 +49,7 @@ typedef unsigned long int uintptr_t;
 
 typedef signed long long intmax_t;
 typedef unsigned long long uintmax_t;
-#line 8 "c:/code/mmt koji ne radi/timer.h"
+#line 9 "c:/code/mmt koji ne radi/timer.h"
 void my_Delay_us(uint32_t num);
 void InitTimerUs();
 
@@ -130,7 +130,7 @@ void RTCInit(void) {
  while (RTC_ISR.WUTWF!=1)
  ;
  RTC_CR.WUTIE = 1;
- RTC_WUTR =  90 ;
+ RTC_WUTR =  20 ;
  RTC_CR |= (0x00000004);
  RTC_CR.WUTE = 1;
 
