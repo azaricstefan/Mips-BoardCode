@@ -1,5 +1,7 @@
 #include "uart.h"
 #include "lcd.h"
+#include "temperature.h"
+
 uint8_t receivedFlag = 0;
 uint8_t receivedTxt[300];
 
@@ -125,8 +127,12 @@ void receive_SMS()
        USART2_Receive();
        if(receivedFlag==1 && receivedTxt[0]=='p' && receivedTxt[1]=='r' && receivedTxt[2]=='e' && receivedTxt[3]=='c' && receivedTxt[4]==':')
        {
-       		//set precision
-       		sendSMS(number);
+           int val=0;
+           int p=5;
+           while(receivedTxt[p]!='\r')
+               val=val*10+receivedTxt[p++]-'0';
+           setPrecision(val);
+           sendSMS(number, val);
        	}
      }  
 }
@@ -179,7 +185,7 @@ void USART2_Send(char input)
 }
 
 
-void sendSMS(char* number) {
+void sendSMS(char* number, int val) {
   int cz = 0x1A; // Ctrl + Z
   int pos=9;
   int posNum=0;

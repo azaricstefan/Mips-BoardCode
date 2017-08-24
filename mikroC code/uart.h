@@ -52,6 +52,6 @@ typedef struct ReceiveStructUART {
 void USART2_Send_Text(uint8_t* input);
 void USART2_Init();
 uint8_t sendData(float temp, float hum, float pres, float dist);
-void sendSMS(char* number);
+void sendSMS(char* number, int val);
 void checkSMS();
 #endif
