@@ -31,7 +31,12 @@ void USART2_Init()
     receiveUART.msgCount=0;
     transmitUART.flag = 0;
     transmitUART.byteCount = 0;
-    transmitUART.bufferPointer = 0;  
+    transmitUART.bufferPointer = 0; 
+    
+    USART2_Send_Text("AT+CLCC\r\n");
+    my_Delay_ms(_TIMER_UART);
+    USART2_Send_Text("AT+CMGF=1\r\n");
+    my_Delay_ms(_TIMER_UART);
 }
 
 void interruptUART() iv IVT_INT_USART2 ics ICS_AUTO
@@ -86,40 +91,23 @@ void USART2_Receive()
     if(receiveUART.bufferPointerRead==1000)
         receiveUART.bufferPointerRead=0;
     receivedTxt[current]=0;
-    //showText(receivedTxt);
-    my_Delay_ms(1000);
     receivedFlag=1;
   }
   else
     receivedFlag=0;
 }
 
-void checkReceivedMsg(uint8_t* txt)
-{
-     if(txt[0]=='+' && txt[1]=='C' &&   txt[2]=='M' && txt[3]=='T' && txt[4]=='I' && txt[5]==':' && txt[6]==':' && txt[7]==' ' &&  txt[8]=='"' &&
-     txt[9]=='S' && txt[10]=='M' && txt[11]=='"' && txt[12]==',')
-     {
-      int num=0;
-      int pos=13;
-      while(txt[pos]!='\r')
-      {
-        num=num*10+txt[pos]-'0';
-        pos++;
-      }
-      
-     }
-}
+
 void receive_SMS()
 {
      USART2_Receive();
-     my_Delay_ms(_TIMER_UART);
-     if(receivedFlag==1)// && receivedTxt[0]=='+' && receivedTxt[1]=='C' &&   receivedTxt[2]=='M' && receivedTxt[3]=='G' && receivedTxt[4]=='L' && receivedTxt[5]==':')
+     if(receivedFlag==1 && receivedTxt[0]=='+' && receivedTxt[1]=='C' &&   receivedTxt[2]=='M' && receivedTxt[3]=='G' && receivedTxt[4]=='L' && receivedTxt[5]==':')
      {
        int pos=0;
        int numQuote=0;
        char number[20];
        int posNum=0;
-     /*  while(numQuote<3)
+       while(numQuote<3)
        {
          if(receivedTxt[pos]=='"')
            numQuote++;
@@ -133,18 +121,23 @@ void receive_SMS()
        }
        numQuote++;
        pos++;
-       number[posNum]=0;*/
-       sendSMS(number);
-     }
-     
+       number[posNum]=0;
+       USART2_Receive();
+       if(receivedFlag==1 && receivedTxt[0]=='p' && receivedTxt[1]=='r' && receivedTxt[2]=='e' && receivedTxt[3]=='c' && receivedTxt[4]==':')
+       {
+       		//set precision
+       		sendSMS(number);
+       	}
+     }  
 }
 
-void sms(){
-     USART2_Send_Text("AT+CMGL=\"ALL\"\r\n");
-     receive_SMS();
-     while(receivedFlag==1)
-       receive_SMS();
-     USART2_Send_Text("AT+CMGD=1,4\r\n");
+void checkSMS(){
+  USART2_Send_Text("AT+CMGL=\"ALL\"\r\n");
+  my_Delay_ms(_TIMER_UART);
+  receive_SMS();
+  while(receivedFlag==1)
+    receive_SMS();
+  USART2_Send_Text("AT+CMGD=1,4\r\n");
 }
 
 void USART2_Send_Text(uint8_t* input)
@@ -208,8 +201,6 @@ void sendSMS(char* number) {
   USART2_Send_Text("AT+CMGS=\"+381642914005\"\r\n");
   Delay_ms(1000);
   USART2_Send_Text(receivedTxt);
- // Delay_ms(1000);
-  //USART2_Send_Text(receivedTxt);
   Delay_ms(1000);
   USART2_Send(cz); 
 }

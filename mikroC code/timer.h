@@ -2,7 +2,8 @@
 #define _TIMER_H
 
 #include "stdint.h"
-#define _RTC_TIME       90
+#define _RTC_TIME       20
+#define _SEND_TIME_LAPS		6
 #define _MAX_TIME_CALC  1000000000
 
 void my_Delay_us(uint32_t num);
