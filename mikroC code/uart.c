@@ -243,7 +243,6 @@ void sendSMS(char* number, int val) {
 	  } else {
 		USART2_Send_Text("Greska: podesavanje nije moguce promeniti,\n postavljeno je podrazumevano podesavanje na 1/16 stepana");    
 	  }
-	  break;
   }
   
  // USART2_Send_Text("Promenjena preciznost na: 1/");
