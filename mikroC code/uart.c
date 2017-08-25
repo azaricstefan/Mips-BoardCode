@@ -237,12 +237,12 @@ void sendSMS(char* number, int val) {
 	case _EIGHT_PRECISION:
 	  USART2_Send_Text("Promenjena preciznost na: 1/8 stepena");
 	  break;
-	default:
-	  if (val == _SIXTEEN_PRECISION) {
-		USART2_Send_Text("Promenjena preciznost na: 1/16 stepena");  
-	  } else {
-		USART2_Send_Text("Greska: podesavanje nije moguce promeniti,\n postavljeno je podrazumevano podesavanje na 1/16 stepana");    
-	  }
+	case _SIXTEEN_PRECISION:
+	  USART2_Send_Text("Promenjena preciznost na: 1/16 stepena");  
+	  break;
+	default:  
+	  USART2_Send_Text("Greska: podesavanje nije moguce promeniti,\n postavljeno je podrazumevano podesavanje na 1/16 stepana");    
+	  
   }
   
  // USART2_Send_Text("Promenjena preciznost na: 1/");
