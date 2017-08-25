@@ -226,11 +226,31 @@ void sendSMS(char* number, int val) {
 //  USART2_Send_Text("AT+CMGS=\"+381642914005\"\r\n");
   Delay_ms(1000);
 //  USART2_Send_Text(txtNum);
-  USART2_Send_Text("Promenjena preciznost na: 1/");
-  IntToStr(val,buffer);
-  USART2_Send_Text(buffer);
-  Delay_ms(1000);
+
+  switch(val) {
+	case _DOUBLE_PRECISION:
+	  USART2_Send_Text("Promenjena preciznost na: 1/2 stepena");
+	  break;
+	case _FOUR__PRECISION:
+	  USART2_Send_Text("Promenjena preciznost na: 1/4 stepena");
+	  break;
+	case _EIGHT_PRECISION:
+	  USART2_Send_Text("Promenjena preciznost na: 1/8 stepena");
+	  break;
+	default:
+	  if (val == _SIXTEEN_PRECISION) {
+		USART2_Send_Text("Promenjena preciznost na: 1/16 stepena");  
+	  } else {
+		USART2_Send_Text("Greska: podesavanje nije moguce promeniti,\n postavljeno je podrazumevano podesavanje na 1/16 stepana");    
+	  }
+	  break;
+  }
+  
+ // USART2_Send_Text("Promenjena preciznost na: 1/");
+ // IntToStr(val,buffer);
+ // USART2_Send_Text(buffer);  
   USART2_Send(cz); 
+  Delay_ms(1000);
 }
 
 uint8_t getReceiveTxt()
