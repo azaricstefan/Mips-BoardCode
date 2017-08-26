@@ -36,11 +36,11 @@ hint: 14	1164	Variable 'distance' has been eliminated by optimizer	ultrasonic.c
 diagnostics: 0	122	Compilation Started	stdint.h
 diagnostics: 53	123	Compiled Successfully	humidity.c
 hint: 8	1164	Variable 'result' has been eliminated by optimizer	humidity.c
-diagnostics: 0	127	All files Compiled in 297 ms	 
+diagnostics: 0	127	All files Compiled in 328 ms	 
 hint: 0	1144	Used RX: 16 (100%)   Free RX: 0 (0%)	Used RX: 16 (100%)   Free RX: 0 (0%)
 hint: 0	1144	Static RAM (bytes): 3047   Dynamic RAM (bytes): 128020	Static RAM (bytes): 3047   Dynamic RAM (bytes): 128020
 hint: 0	1144	Used ROM (bytes): 14049 (1%)  Free ROM (bytes): 1034527 (99%)	Used ROM (bytes): 14049 (1%)  Free ROM (bytes): 1034527 (99%)
 diagnostics: 0	125	Project Linked Successfully	MyProject.mcpar
-diagnostics: 0	128	Linked in 375 ms	 
-diagnostics: 0	129	Project 'MyProject.mcpar' completed: 828 ms	 
-diagnostics: 0	103	Finished successfully: 26 Aug 2017, 17:43:49	MyProject.mcpar
+diagnostics: 0	128	Linked in 422 ms	 
+diagnostics: 0	129	Project 'MyProject.mcpar' completed: 922 ms	 
+diagnostics: 0	103	Finished successfully: 26 Aug 2017, 18:45:52	MyProject.mcpar

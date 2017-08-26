@@ -89,16 +89,16 @@ _oneWireReset:
 ;temperature.c,30 :: 		uint8_t oneWireReset(){
 SUB	SP, SP, #8
 STR	LR, [SP, #0]
-;temperature.c,33 :: 		GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
-MOVW	R1, #2
-MOVW	R0, #lo_addr(GPIOB_BASE+0)
-MOVT	R0, #hi_addr(GPIOB_BASE+0)
+;temperature.c,33 :: 		GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
+MOVW	R1, #8
+MOVW	R0, #lo_addr(GPIOC_BASE+0)
+MOVT	R0, #hi_addr(GPIOC_BASE+0)
 BL	_GPIO_Digital_Output+0
 ;temperature.c,34 :: 		OWDO = 1;
 MOVS	R0, #1
 SXTB	R0, R0
-MOVW	R1, #lo_addr(ODR1_GPIOB_ODR_bit+0)
-MOVT	R1, #hi_addr(ODR1_GPIOB_ODR_bit+0)
+MOVW	R1, #lo_addr(ODR3_GPIOC_ODR_bit+0)
+MOVT	R1, #hi_addr(ODR3_GPIOC_ODR_bit+0)
 STR	R0, [R1, #0]
 ;temperature.c,35 :: 		OWDO = 0;
 MOVS	R0, #0
@@ -110,20 +110,20 @@ BL	_my_Delay_us+0
 ;temperature.c,37 :: 		OWDO = 1;
 MOVS	R1, #1
 SXTB	R1, R1
-MOVW	R0, #lo_addr(ODR1_GPIOB_ODR_bit+0)
-MOVT	R0, #hi_addr(ODR1_GPIOB_ODR_bit+0)
+MOVW	R0, #lo_addr(ODR3_GPIOC_ODR_bit+0)
+MOVT	R0, #hi_addr(ODR3_GPIOC_ODR_bit+0)
 STR	R1, [R0, #0]
-;temperature.c,38 :: 		GPIO_Digital_Input(&GPIOB_BASE, _GPIO_PINMASK_1);
-MOVW	R1, #2
-MOVW	R0, #lo_addr(GPIOB_BASE+0)
-MOVT	R0, #hi_addr(GPIOB_BASE+0)
+;temperature.c,38 :: 		GPIO_Digital_Input(&GPIOC_BASE, _GPIO_PINMASK_3);
+MOVW	R1, #8
+MOVW	R0, #lo_addr(GPIOC_BASE+0)
+MOVT	R0, #hi_addr(GPIOC_BASE+0)
 BL	_GPIO_Digital_Input+0
 ;temperature.c,40 :: 		my_Delay_us(_TEMP_RESET_1);
 MOVS	R0, #70
 BL	_my_Delay_us+0
 ;temperature.c,41 :: 		ret = OWDI;
-MOVW	R1, #lo_addr(IDR1_GPIOB_IDR_bit+0)
-MOVT	R1, #hi_addr(IDR1_GPIOB_IDR_bit+0)
+MOVW	R1, #lo_addr(IDR3_GPIOC_IDR_bit+0)
+MOVT	R1, #hi_addr(IDR3_GPIOC_IDR_bit+0)
 LDR	R0, [R1, #0]
 STRB	R0, [SP, #4]
 ;temperature.c,42 :: 		if (ret == 0){
@@ -131,32 +131,32 @@ LDRB	R0, [SP, #4]
 CMP	R0, #0
 IT	NE
 BNE	L_oneWireReset7
-;temperature.c,43 :: 		GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
-MOVW	R1, #2
-MOVW	R0, #lo_addr(GPIOB_BASE+0)
-MOVT	R0, #hi_addr(GPIOB_BASE+0)
+;temperature.c,43 :: 		GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
+MOVW	R1, #8
+MOVW	R0, #lo_addr(GPIOC_BASE+0)
+MOVT	R0, #hi_addr(GPIOC_BASE+0)
 BL	_GPIO_Digital_Output+0
 ;temperature.c,44 :: 		OWDO = 1;
 MOVS	R1, #1
 SXTB	R1, R1
-MOVW	R0, #lo_addr(ODR1_GPIOB_ODR_bit+0)
-MOVT	R0, #hi_addr(ODR1_GPIOB_ODR_bit+0)
+MOVW	R0, #lo_addr(ODR3_GPIOC_ODR_bit+0)
+MOVT	R0, #hi_addr(ODR3_GPIOC_ODR_bit+0)
 STR	R1, [R0, #0]
 ;temperature.c,45 :: 		}
 L_oneWireReset7:
 ;temperature.c,46 :: 		my_Delay_us(_TEMP_RESET_2);
 MOVS	R0, #250
 BL	_my_Delay_us+0
-;temperature.c,48 :: 		GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
-MOVW	R1, #2
-MOVW	R0, #lo_addr(GPIOB_BASE+0)
-MOVT	R0, #hi_addr(GPIOB_BASE+0)
+;temperature.c,48 :: 		GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
+MOVW	R1, #8
+MOVW	R0, #lo_addr(GPIOC_BASE+0)
+MOVT	R0, #hi_addr(GPIOC_BASE+0)
 BL	_GPIO_Digital_Output+0
 ;temperature.c,49 :: 		OWDO = 1;
 MOVS	R1, #1
 SXTB	R1, R1
-MOVW	R0, #lo_addr(ODR1_GPIOB_ODR_bit+0)
-MOVT	R0, #hi_addr(ODR1_GPIOB_ODR_bit+0)
+MOVW	R0, #lo_addr(ODR3_GPIOC_ODR_bit+0)
+MOVT	R0, #hi_addr(ODR3_GPIOC_ODR_bit+0)
 STR	R1, [R0, #0]
 ;temperature.c,50 :: 		return ret;
 LDRB	R0, [SP, #4]
@@ -174,16 +174,16 @@ STR	LR, [SP, #0]
 UXTB	R11, R0
 ; b end address is: 0 (R0)
 ; b start address is: 44 (R11)
-;temperature.c,54 :: 		GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
-MOVW	R1, #2
-MOVW	R0, #lo_addr(GPIOB_BASE+0)
-MOVT	R0, #hi_addr(GPIOB_BASE+0)
+;temperature.c,54 :: 		GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
+MOVW	R1, #8
+MOVW	R0, #lo_addr(GPIOC_BASE+0)
+MOVT	R0, #hi_addr(GPIOC_BASE+0)
 BL	_GPIO_Digital_Output+0
 ;temperature.c,55 :: 		OWDO = 1;
 MOVS	R1, #1
 SXTB	R1, R1
-MOVW	R2, #lo_addr(ODR1_GPIOB_ODR_bit+0)
-MOVT	R2, #hi_addr(ODR1_GPIOB_ODR_bit+0)
+MOVW	R2, #lo_addr(ODR3_GPIOC_ODR_bit+0)
+MOVT	R2, #hi_addr(ODR3_GPIOC_ODR_bit+0)
 STR	R1, [R2, #0]
 ;temperature.c,56 :: 		OWDO = 0;
 MOVS	R1, #0
@@ -200,8 +200,8 @@ BL	_my_Delay_us+0
 ;temperature.c,59 :: 		OWDO = 1;
 MOVS	R2, #1
 SXTB	R2, R2
-MOVW	R1, #lo_addr(ODR1_GPIOB_ODR_bit+0)
-MOVT	R1, #hi_addr(ODR1_GPIOB_ODR_bit+0)
+MOVW	R1, #lo_addr(ODR3_GPIOC_ODR_bit+0)
+MOVT	R1, #hi_addr(ODR3_GPIOC_ODR_bit+0)
 STR	R2, [R1, #0]
 ;temperature.c,60 :: 		my_Delay_us(_TEMP_READ_ONE_2);
 MOVS	R0, #50
@@ -216,8 +216,8 @@ BL	_my_Delay_us+0
 ;temperature.c,63 :: 		OWDO = 1;
 MOVS	R2, #1
 SXTB	R2, R2
-MOVW	R1, #lo_addr(ODR1_GPIOB_ODR_bit+0)
-MOVT	R1, #hi_addr(ODR1_GPIOB_ODR_bit+0)
+MOVW	R1, #lo_addr(ODR3_GPIOC_ODR_bit+0)
+MOVT	R1, #hi_addr(ODR3_GPIOC_ODR_bit+0)
 STR	R2, [R1, #0]
 ;temperature.c,64 :: 		}
 L_oneWireWriteBit9:
@@ -231,47 +231,47 @@ _oneWireReadBit:
 ;temperature.c,67 :: 		int oneWireReadBit(){
 SUB	SP, SP, #8
 STR	LR, [SP, #0]
-;temperature.c,69 :: 		GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
-MOVW	R1, #2
-MOVW	R0, #lo_addr(GPIOB_BASE+0)
-MOVT	R0, #hi_addr(GPIOB_BASE+0)
+;temperature.c,69 :: 		GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
+MOVW	R1, #8
+MOVW	R0, #lo_addr(GPIOC_BASE+0)
+MOVT	R0, #hi_addr(GPIOC_BASE+0)
 BL	_GPIO_Digital_Output+0
 ;temperature.c,70 :: 		OWDO = 1;
 MOVS	R0, #1
 SXTB	R0, R0
-MOVW	R1, #lo_addr(ODR1_GPIOB_ODR_bit+0)
-MOVT	R1, #hi_addr(ODR1_GPIOB_ODR_bit+0)
+MOVW	R1, #lo_addr(ODR3_GPIOC_ODR_bit+0)
+MOVT	R1, #hi_addr(ODR3_GPIOC_ODR_bit+0)
 STR	R0, [R1, #0]
 ;temperature.c,71 :: 		OWDO = 0;
 MOVS	R0, #0
 SXTB	R0, R0
 STR	R0, [R1, #0]
-;temperature.c,73 :: 		GPIO_Digital_Input(&GPIOB_BASE, _GPIO_PINMASK_1);
-MOVW	R1, #2
-MOVW	R0, #lo_addr(GPIOB_BASE+0)
-MOVT	R0, #hi_addr(GPIOB_BASE+0)
+;temperature.c,73 :: 		GPIO_Digital_Input(&GPIOC_BASE, _GPIO_PINMASK_3);
+MOVW	R1, #8
+MOVW	R0, #lo_addr(GPIOC_BASE+0)
+MOVT	R0, #hi_addr(GPIOC_BASE+0)
 BL	_GPIO_Digital_Input+0
 ;temperature.c,74 :: 		my_Delay_us(_TEMP_READ_INIT);
 MOVS	R0, #5
 BL	_my_Delay_us+0
 ;temperature.c,75 :: 		b = OWDI;
-MOVW	R1, #lo_addr(IDR1_GPIOB_IDR_bit+0)
-MOVT	R1, #hi_addr(IDR1_GPIOB_IDR_bit+0)
+MOVW	R1, #lo_addr(IDR3_GPIOC_IDR_bit+0)
+MOVT	R1, #hi_addr(IDR3_GPIOC_IDR_bit+0)
 LDR	R0, [R1, #0]
 STRB	R0, [SP, #4]
 ;temperature.c,76 :: 		my_Delay_us(_TEMP_READ_WAIT);
 MOVS	R0, #55
 BL	_my_Delay_us+0
-;temperature.c,77 :: 		GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
-MOVW	R1, #2
-MOVW	R0, #lo_addr(GPIOB_BASE+0)
-MOVT	R0, #hi_addr(GPIOB_BASE+0)
+;temperature.c,77 :: 		GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
+MOVW	R1, #8
+MOVW	R0, #lo_addr(GPIOC_BASE+0)
+MOVT	R0, #hi_addr(GPIOC_BASE+0)
 BL	_GPIO_Digital_Output+0
 ;temperature.c,78 :: 		OWDO = 1;
 MOVS	R1, #1
 SXTB	R1, R1
-MOVW	R0, #lo_addr(ODR1_GPIOB_ODR_bit+0)
-MOVT	R0, #hi_addr(ODR1_GPIOB_ODR_bit+0)
+MOVW	R0, #lo_addr(ODR3_GPIOC_ODR_bit+0)
+MOVT	R0, #hi_addr(ODR3_GPIOC_ODR_bit+0)
 STR	R1, [R0, #0]
 ;temperature.c,79 :: 		return b;
 LDRB	R0, [SP, #4]

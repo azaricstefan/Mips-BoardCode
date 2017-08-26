@@ -1,7 +1,7 @@
 #include "temperature.h"
 #include "lcd.h"
-sbit OWDI at IDR1_GPIOB_IDR_bit;
-sbit OWDO at ODR1_GPIOB_ODR_bit;
+sbit OWDI at IDR3_GPIOC_IDR_bit;
+sbit OWDO at ODR3_GPIOC_ODR_bit;
 
 uint8_t scratchpad[9];
 static uint8_t precision = 16;
@@ -30,28 +30,28 @@ uint8_t crc8()
 uint8_t oneWireReset(){
     uint8_t ret;
     
-    GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
+    GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
     OWDO = 1;
     OWDO = 0;
     my_Delay_us(_TEMP_RESET_START); 
     OWDO = 1;
-    GPIO_Digital_Input(&GPIOB_BASE, _GPIO_PINMASK_1);
+    GPIO_Digital_Input(&GPIOC_BASE, _GPIO_PINMASK_3);
 
     my_Delay_us(_TEMP_RESET_1);
     ret = OWDI;
     if (ret == 0){
-       GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
+       GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
        OWDO = 1;
     }
     my_Delay_us(_TEMP_RESET_2); 
 
-    GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
+    GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
     OWDO = 1;
     return ret;
 }
 
 void oneWireWriteBit(uint8_t b){
-     GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
+     GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
      OWDO = 1;
      OWDO = 0;
      if (b){
@@ -66,15 +66,15 @@ void oneWireWriteBit(uint8_t b){
 
 int oneWireReadBit(){
     uint8_t b;
-    GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
+    GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
     OWDO = 1;
     OWDO = 0;
 
-    GPIO_Digital_Input(&GPIOB_BASE, _GPIO_PINMASK_1);
+    GPIO_Digital_Input(&GPIOC_BASE, _GPIO_PINMASK_3);
     my_Delay_us(_TEMP_READ_INIT); 
     b = OWDI;
     my_Delay_us(_TEMP_READ_WAIT); 
-    GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
+    GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
     OWDO = 1;
     return b;
 }

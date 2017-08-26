@@ -75,8 +75,8 @@ void initLCD();
 
 void showText(uint8_t* text);
 #line 3 "C:/Code/MMT koji ne radi/temperature.c"
-sbit OWDI at IDR1_GPIOB_IDR_bit;
-sbit OWDO at ODR1_GPIOB_ODR_bit;
+sbit OWDI at IDR3_GPIOC_IDR_bit;
+sbit OWDO at ODR3_GPIOC_ODR_bit;
 
 uint8_t scratchpad[9];
 static uint8_t precision = 16;
@@ -105,28 +105,28 @@ uint8_t crc8()
 uint8_t oneWireReset(){
  uint8_t ret;
 
- GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
+ GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
  OWDO = 1;
  OWDO = 0;
  my_Delay_us( 480 );
  OWDO = 1;
- GPIO_Digital_Input(&GPIOB_BASE, _GPIO_PINMASK_1);
+ GPIO_Digital_Input(&GPIOC_BASE, _GPIO_PINMASK_3);
 
  my_Delay_us( 70 );
  ret = OWDI;
  if (ret == 0){
- GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
+ GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
  OWDO = 1;
  }
  my_Delay_us( 250 );
 
- GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
+ GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
  OWDO = 1;
  return ret;
 }
 
 void oneWireWriteBit(uint8_t b){
- GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
+ GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
  OWDO = 1;
  OWDO = 0;
  if (b){
@@ -141,15 +141,15 @@ void oneWireWriteBit(uint8_t b){
 
 int oneWireReadBit(){
  uint8_t b;
- GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
+ GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
  OWDO = 1;
  OWDO = 0;
 
- GPIO_Digital_Input(&GPIOB_BASE, _GPIO_PINMASK_1);
+ GPIO_Digital_Input(&GPIOC_BASE, _GPIO_PINMASK_3);
  my_Delay_us( 5 );
  b = OWDI;
  my_Delay_us( 55 );
- GPIO_Digital_Output(&GPIOB_BASE, _GPIO_PINMASK_1);
+ GPIO_Digital_Output(&GPIOC_BASE, _GPIO_PINMASK_3);
  OWDO = 1;
  return b;
 }
