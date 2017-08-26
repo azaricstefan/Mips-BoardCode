@@ -80,8 +80,6 @@ interRTC
 			setPrecision
 			sendSMS
 				USART2_Send_Text
-				IntToStr
-					WordToStr
 				USART2_Send
 			strcpy
 			strlen

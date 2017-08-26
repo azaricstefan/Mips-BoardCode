@@ -103,7 +103,7 @@ void USART2_Receive()
 void receive_SMS()
 {
      USART2_Receive();
-     showText(receivedTxt);
+//     showText(receivedTxt);
      if(receivedFlag==1 && receivedTxt[0]=='+' && receivedTxt[1]=='C' &&   receivedTxt[2]=='M' && receivedTxt[3]=='G' && receivedTxt[4]=='L' && receivedTxt[5]==':')
      {
        int pos=0;

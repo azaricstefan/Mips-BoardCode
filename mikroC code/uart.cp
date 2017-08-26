@@ -200,7 +200,7 @@ void USART2_Receive()
 void receive_SMS()
 {
  USART2_Receive();
- showText(receivedTxt);
+
  if(receivedFlag==1 && receivedTxt[0]=='+' && receivedTxt[1]=='C' && receivedTxt[2]=='M' && receivedTxt[3]=='G' && receivedTxt[4]=='L' && receivedTxt[5]==':')
  {
  int pos=0;
@@ -323,11 +323,30 @@ void sendSMS(char* number, int val) {
 
  Delay_ms(1000);
 
- USART2_Send_Text("Promenjena preciznost na: 1/");
- IntToStr(val,buffer);
- USART2_Send_Text(buffer);
- Delay_ms(1000);
+
+ switch(val) {
+ case  2 :
+ USART2_Send_Text("Promenjena preciznost na: 1/2 stepena");
+ break;
+ case  4 :
+ USART2_Send_Text("Promenjena preciznost na: 1/4 stepena");
+ break;
+ case  8 :
+ USART2_Send_Text("Promenjena preciznost na: 1/8 stepena");
+ break;
+ case  16 :
+ USART2_Send_Text("Promenjena preciznost na: 1/16 stepena");
+ break;
+ default:
+ USART2_Send_Text("Greska: podesavanje nije moguce promeniti,\n postavljeno je podrazumevano podesavanje na 1/16 stepana");
+
+ }
+
+
+
+
  USART2_Send(cz);
+ Delay_ms(1000);
 }
 
 uint8_t getReceiveTxt()
